@@ -1,0 +1,15 @@
+"familiarblockgame"
+{
+	"base"		"sandbox"
+	"title"		"Familiar Block Game"
+	"maps"		"^rblx_"
+	"menusystem"	"1"
+	"workshopid"	""
+
+	"settings"
+	{
+		
+
+	}
+
+}
