@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/bricktextures/stud_white"
+	"$surfaceprop" "Concrete"
+	"$basetexturetransform" "center 0 0 scale 4 4 rotate 0 translate 0 -0.01"
+
+}

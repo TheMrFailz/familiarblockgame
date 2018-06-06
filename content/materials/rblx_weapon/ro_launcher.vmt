@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "rblx_weapon/ro_launcher"
+	"$surfaceprop" "Metal"
+	"$translucent" 1
+}
