@@ -1,4 +1,4 @@
-SWEP.PrintName			= "Cool Color Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
+SWEP.PrintName			= "Resizer Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
 SWEP.Author			= "TheMrFailz" -- These two options will be shown when you have the weapon highlighted in the weapon selection menu
 
 SWEP.Spawnable = true
@@ -18,7 +18,7 @@ SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo		= "none"
 
 SWEP.Slot			= 0
-SWEP.SlotPos			= 4
+SWEP.SlotPos			= 2
 SWEP.DrawAmmo			= false
 SWEP.DrawCrosshair		= true
 

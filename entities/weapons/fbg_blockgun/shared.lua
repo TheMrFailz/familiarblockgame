@@ -20,9 +20,9 @@ SWEP.Secondary.Ammo		= "none"
 SWEP.Slot			= 0
 SWEP.SlotPos			= 1
 SWEP.DrawAmmo			= false
-SWEP.DrawCrosshair		= false
+SWEP.DrawCrosshair		= true
 
-SWEP.ViewModel			= "models/weapons/c_crowbar.mdl"
+SWEP.ViewModel			= ""
 SWEP.WorldModel			= "models/weapons/w_pistol.mdl"
 
 SWEP.HoldType = "pistol"

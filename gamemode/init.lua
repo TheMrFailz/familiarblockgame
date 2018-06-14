@@ -147,30 +147,36 @@ function blockinit(ply, lookpos)
     newprop:SetModel(brickgenerator(1,1,1))
     newprop:SetPos(brickposgenerator(lookpos))
     newprop:Spawn()
+    
+    local phys = newprop:GetPhysicsObject()
+	if (phys:IsValid()) then
+		phys:Wake()
+	end
+    
     newprop:GetPhysicsObject():EnableMotion(false)
-    newprop:SetOwner(ply)
+    --newprop:SetOwner(ply)
     
 
 end
 
 function blockcolor(ply, lookent, Color)
     if (!lookent:IsValid()) then return end
-    if (lookent:GetOwner() == ply) then 
+    --if (lookent:GetOwner() == ply) then 
         lookent:SetColor(Color)
         print("Made color")
         print(Color)
         
-    end
+    --end
     
 
 end
 
 function blockdelete(ply, lookent)
     if (!lookent:IsValid()) then return end
-    if (lookent:GetOwner() == ply) then 
+    --if (lookent:GetOwner() == ply) then 
         lookent:Remove()
         
-    end
+    --end
     
 end
 
