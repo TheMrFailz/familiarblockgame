@@ -1,8 +1,32 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "roblox_guy.lua" )
+AddCSLuaFile( "robloxhud.lua")
+AddCSLuaFile( "camerastuff.lua")
 include( "shared.lua" )
 include( "roblox_guy.lua")
+include( "gamescript.lua") 
+
+isAllowed_Build = true
+
+util.AddNetworkString( "client_ScreenMessage" )
+
+function messageOverlay(ply, message)
+    if IsValid(ply) then
+        net.Start("client_ScreenMessage")
+        net.WriteEntity(ply)
+        net.WriteString(message)
+        --net.WriteInt(delay)
+        net.Send(ply)
+        --print("run2")
+    end
+
+end
+concommand.Add("screenything", function( ply, cmd, args, argStr)
+    messageOverlay(ply, argStr)
+    --print("run")
+end) 
+
  
 function GM:PlayerDeathSound()
     return true
@@ -17,10 +41,16 @@ function GM:PlayerDeath( ply, wep, attacker )
 end
 
 concommand.Add("join_buildmode", function( ply, cmd, args)
-    ply:SetTeam(2)
-    ply:SetModel("models/dav0r/camera.mdl")
-    print("Entered build mode...")
-    ply:Kill()
+    if isAllowed_Build == true then
+        ply:SetTeam(2)
+        ply:SetModel("models/dav0r/camera.mdl")
+        print("Entered build mode...")
+        ply:Kill()
+    else
+        print("Error! Build mode disabled!")
+        print("Change 'isAllowed_Build' to true in init.lua!")
+    
+    end
     end)
     
 concommand.Add("join_playmode", function( ply, cmd, args)
@@ -34,7 +64,7 @@ concommand.Add("join_playmode", function( ply, cmd, args)
     
 function GM:PlayerInitialSpawn(ply)
     ply:ConCommand("join_playmode")
-    
+    ply:ConCommand("dsp_off 1")
 
 end
     

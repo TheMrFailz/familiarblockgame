@@ -59,7 +59,9 @@ function SWEP:PrimaryAttack()
     physics:EnableDrag( false )
     physics:SetVelocity(self.Owner:GetAimVector()*1000)
     
-    print(self.Owner:EyeAngles())
+    --print(self.Owner:EyeAngles())
+    print(self.Owner:GetViewEntity():GetPos())
+    
     local FaceAngles = self.Owner:EyeAngles()
     
     rocket:SetAngles(Angle(0,FaceAngles.yaw + 90,FaceAngles.pitch))
