@@ -9,3 +9,17 @@ function GM:Initialize()
     team.SetUp(1, "Playmode", Color(0,0,255), true)
 	team.SetUp(2, "Buildmode", Color(0,0,255), true)
 end
+
+hook.Add("PlayerButtonDown", "ButtonyThings", function(ply, button)
+    
+    local weaponsTable = ply:GetWeapons()
+    local numOfWeps = table.Count(weaponsTable)
+    
+    
+    if ((button - 1) >= 0 ) && ((button - 1) <= 9) then
+        ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
+        
+    end
+    
+
+end)

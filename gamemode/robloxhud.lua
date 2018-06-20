@@ -35,6 +35,7 @@ function WeaponSelect()
     
     
     for i = 0, numOfWeps - 1 do
+        surface.SetDrawColor(255,255,255,255) -- Cleanup so our shit doesn't end up green.
         local wepClass = weaponsTable[i+1]:GetClass()
         --print('materials/entities/' .. wepClass .. '.png')
         local wepPos = table.KeyFromValue(weaponsTable, LocalPlayer():GetActiveWeapon()) - 1 -- Find out where in the table your current weapon is so we can highlight it
@@ -56,7 +57,7 @@ function WeaponSelect()
             -- to be on the selected weapon, draw a cool green box outline.
             
         end
-        surface.SetDrawColor(255,255,255,255) -- Cleanup so our shit doesn't end up green.
+        
     end
 
 

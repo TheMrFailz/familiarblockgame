@@ -3,6 +3,17 @@ include( "robloxhud.lua")
 include( "camerastuff.lua")
 
 hook.Add('OnContextMenuOpen', 'NoContext4u', function()return false end)
+local hide = {
+	["CHudWeaponSelection"] = true
+}
+
+hook.Add( "HUDShouldDraw", "HideHUD", function( name )
+	if ( hide[ name ] ) then return false end
+
+end )
+
+
+
 
 local ZoomLevel = 20
 
