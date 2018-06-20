@@ -74,7 +74,7 @@ function HUD()
     local NormalColor = Color(0,0,0,200)
     local DisabledColor = Color(100,100,100,200)
     
-    draw.RoundedBox(0, 0, 0, ScrW() / 2, 30, Color(214, 209, 209,150))
+    draw.RoundedBox(0, 0, 0, 650, 30, Color(214, 209, 209,150))
     --/**
     draw.Text({
         text = "Fullscreen",
