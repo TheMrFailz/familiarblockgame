@@ -18,7 +18,7 @@ SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo		= "none"
 
 SWEP.Slot			= 0
-SWEP.SlotPos			= 2
+SWEP.SlotPos			= 5
 SWEP.DrawAmmo			= false
 SWEP.DrawCrosshair		= true
 

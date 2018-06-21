@@ -36,7 +36,7 @@ function WeaponSelect()
     
     for i = 0, numOfWeps - 1 do
         surface.SetDrawColor(255,255,255,255) -- Cleanup so our shit doesn't end up green.
-        local wepClass = weaponsTable[i+1]:GetClass()
+        local wepClass = weaponsTable[i+1]:GetClass() 
         --print('materials/entities/' .. wepClass .. '.png')
         local wepPos = table.KeyFromValue(weaponsTable, LocalPlayer():GetActiveWeapon()) - 1 -- Find out where in the table your current weapon is so we can highlight it
         
@@ -62,7 +62,43 @@ function WeaponSelect()
 
 
 end
+
+function RScoreBoard()
+    local playerTable = player.GetAll()
+    
+    draw.RoundedBox(0, ScrW() - 255, 10, 245, 50 + (table.Count(playerTable) * 17), Color(214, 209, 209,150))
+    draw.Text({
+        text = "Player List",
+        font = "ConvictSans",
+        pos = { ScrW() - 255, 10 },
+        color = Color(255,255,255,200)
+    })
+    
+    for i = 1, table.Count(playerTable) do
+        local col = team.GetColor(playerTable[i]:Team())
+        local r, g, b, a = col.r, col.g, col.b, col.a
+        draw.Text({
+            text = playerTable[i]:Nick(),
+            font = "ConvictSans",
+            pos = { ScrW() - 255, 15 + (i * 17) },
+            color = Color(r,g,b,200)
+        })
+    
+    
+    end
+    
+    
+    
+end
+
 hook.Add("HUDPaint", "RobloxWeaponSelect", WeaponSelect)
+hook.Add("HUDPaint", "RobloxScoreBoard", RScoreBoard)
+
+
+
+
+
+--function PlayerList
 
 function HUD()
     local client = LocalPlayer()
@@ -74,27 +110,28 @@ function HUD()
     local NormalColor = Color(0,0,0,200)
     local DisabledColor = Color(100,100,100,200)
     
-    draw.RoundedBox(0, 0, 0, 650, 30, Color(214, 209, 209,150))
+    draw.RoundedBox(0, 0, 0, 650, 30, Color(214, 209, 209,150)) -- Draw that grey menu bar on the top let
     --/**
+    -- WORDS
     draw.Text({
         text = "Fullscreen",
         font = "ConvictSans",
         pos = { 250, 0 },
-        color = NormalColor
+        color = DisabledColor
     })
     
     draw.Text({
         text = "Tools",
         font = "ConvictSans",
         pos = { 10, 0 },
-        color = NormalColor
+        color = DisabledColor
     })
     
     draw.Text({
         text = "Insert",
         font = "ConvictSans",
         pos = { 120, 0 },
-        color = NormalColor
+        color = DisabledColor
     })
     
     draw.Text({

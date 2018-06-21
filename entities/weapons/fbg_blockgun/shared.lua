@@ -36,6 +36,7 @@ SWEP.ViewModelBoneMods = {}
 
 
 function SWEP:PrimaryAttack()
+    
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
     

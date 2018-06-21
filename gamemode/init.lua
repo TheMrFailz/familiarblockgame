@@ -2,6 +2,7 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "roblox_guy.lua" )
 AddCSLuaFile( "robloxhud.lua")
+AddCSLuaFile( "robloxchat.lua")
 AddCSLuaFile( "camerastuff.lua")
 include( "shared.lua" )
 include( "roblox_guy.lua")
@@ -57,7 +58,7 @@ concommand.Add("join_playmode", function( ply, cmd, args)
     ply:SetTeam(1)
     ply:UnSpectate()
     ply:SetModel("models/player/failzstuff/roblox_guy/roblox_guy.mdl")
-    print("Entered play mode...")
+    --print("Entered play mode...")
     ply:Kill()
     end)
     
@@ -73,7 +74,7 @@ function GM:PlayerSpawn(ply)
 
     if ply:Team() == 1 then
         print("Play mode player spawned!")
-        
+        ply:ConCommand("join_playmode")
         
     end
     

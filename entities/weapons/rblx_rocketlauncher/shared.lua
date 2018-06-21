@@ -44,7 +44,7 @@ SWEP.WElements = {
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
-    
+    if SERVER then
     local rocket = ents.Create( "roblox_rocket" )
     if(!IsValid(rocket)) then return end
     local spawnpos = self.Owner:LocalToWorld( Vector(70,0,60))
@@ -67,7 +67,7 @@ function SWEP:PrimaryAttack()
     rocket:SetAngles(Angle(0,FaceAngles.yaw + 90,FaceAngles.pitch))
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
     --rocket:SetAngles(self.Owner:GetAimVector():Angle())
-
+    end
 end
 
 function SWEP:Initialize()

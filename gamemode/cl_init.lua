@@ -1,10 +1,12 @@
 include( "shared.lua" )
 include( "robloxhud.lua")
+include( "robloxchat.lua")
 include( "camerastuff.lua")
 
 hook.Add('OnContextMenuOpen', 'NoContext4u', function()return false end)
 local hide = {
 	["CHudWeaponSelection"] = true
+    --["CHudChatC"] = true
 }
 
 hook.Add( "HUDShouldDraw", "HideHUD", function( name )
