@@ -36,7 +36,7 @@ SWEP.ViewModelBoneMods = {}
 
 
 function SWEP:PrimaryAttack()
-    
+    if SERVER then 
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
     
@@ -46,7 +46,7 @@ function SWEP:PrimaryAttack()
     blockinit(self.Owner,aimpos) 
     
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-
+    end
 end
 
 function SWEP:SecondaryAttack()

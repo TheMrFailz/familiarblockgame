@@ -37,47 +37,20 @@ local S_Color = Color(0,0,0,255)
 
 
 local Active = 0
-function ColorSet(Active)
-    local R = S_Color.r
-    local G = S_Color.g
-    local B = S_Color.b
-    
 
-
-    if Active == 0 then
-        if R >= 255 then
-            S_Color = Color(0, G, B)
-        else
-            S_Color = Color(R + 10, G, B)
-        end
-    elseif Active == 1 then
-        if G >= 255 then
-            S_Color = Color(R, 0, B)
-        else
-            S_Color = Color(R, G + 10,  B)
-        end
-    elseif Active == 2 then
-        if B >= 255 then
-            S_Color = Color(R, G, 0)
-        else
-            S_Color = Color(R, G, B + 10)
-        end
-    end
-    --print(S_Color)
-    return S_Color
-end
 
 function SWEP:PrimaryAttack()
+    if SERVER then
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
     
     local lookdat = self.Owner:GetEyeTrace()
     local aimpos = lookdat.Entity
-    ColorSet(Active)
-    blockcolor(self.Owner,aimpos, S_Color) 
+    
+    
     
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-
+    end
 end
 
 function SWEP:SecondaryAttack()

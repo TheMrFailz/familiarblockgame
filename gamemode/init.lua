@@ -25,8 +25,8 @@ function messageOverlay(ply, message)
 end
 concommand.Add("screenything", function( ply, cmd, args, argStr)
     messageOverlay(ply, argStr)
-    --print("run")
-end) 
+    print(argStr)
+end)
 
  
 function GM:PlayerDeathSound()
@@ -74,7 +74,7 @@ function GM:PlayerSpawn(ply)
 
     if ply:Team() == 1 then
         print("Play mode player spawned!")
-        ply:ConCommand("join_playmode")
+        --ply:ConCommand("join_playmode")
         
     end
     
@@ -211,3 +211,27 @@ function blockdelete(ply, lookent)
     
 end
 
+local bigtable = {}
+
+-- Map save thing
+function fbg_worldsave()
+    local worldObjTable = ents.FindByClass("roblox_brick_base")
+    local worldObjDat = {}
+    for i = 1, table.Count(worldObjTable) do
+        duplicator.Copy(worldObjTable[i], worldObjDat)
+        
+    end
+    
+    bigtable = worldObjDat
+    print("SAVED")
+end
+
+concommand.Add("fbg_worldsave", fbg_worldsave)
+
+-- Map load thing
+
+function fbg_worldload()
+    duplicator.Paste(Entity(1), bigtable, bigtable)
+    print("DING")
+end
+concommand.Add("fbg_worldload", fbg_worldload)

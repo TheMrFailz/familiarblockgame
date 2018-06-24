@@ -69,6 +69,7 @@ end
 
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
+    if SERVER then
     self.Weapon:EmitSound(self.Primary.Sound)
     
     local lookdat = self.Owner:GetEyeTrace()
@@ -77,7 +78,7 @@ function SWEP:PrimaryAttack()
     blockcolor(self.Owner,aimpos, S_Color) 
     
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-
+    end
 end
 
 function SWEP:SecondaryAttack()

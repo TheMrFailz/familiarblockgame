@@ -14,7 +14,23 @@ hook.Add( "HUDShouldDraw", "HideHUD", function( name )
 
 end )
 
-
+surface.CreateFont( "ConvictSansOverlay", {
+	font = "Comic Sans MS", -- Use the font-name which is shown to you by your operating system Font Viewer, not the file name
+	extended = false,
+	size = 32,
+	weight = 500,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false,
+} )
 
 
 local ZoomLevel = 20
@@ -26,27 +42,52 @@ end
 
 --hook.Add('OnContextMenuOpen', 'NoContext4u', function()return false end)
 
-local function messageOv(ply, message)
-    
-    local greybox = draw.RoundedBox( 0, 0, 0, ScrW(), ScrH(), Color(214, 209, 209,150))
-    local text = draw.Text({
-        text = message,
-        font = "ConvictSans",
-        pos = { ScrW() / 2, ScrH() / 2 },
-        color = NormalColor
-    })
-    
-    
+local messageOverlay = {}
+messageOverlay.text = ""
+messageOverlay.time = 0
 
-end
 
 net.Receive("client_ScreenMessage", function()
     local ply = net.ReadEntity()
     local message = net.ReadString()
     --local delay = net.ReadInt()
-    messageOv(ply, message)
+    
+    messageOverlay.text = message
+    messageOverlay.target = ply
+    messageOverlay.time = CurTime() + 5
+    --messageOv(ply, message, CurTime() + 3)
     --print("Hello!")
 end)
+
+function messageOv(ply, message)
+    
+    
+    
+    local greybox = draw.RoundedBox( 0, 0, 0, ScrW(), ScrH(), Color(214, 209, 209,150))
+    local offset = string.len(message) * 5
+    
+    local text = draw.Text({
+        text = message,
+        font = "ConvictSansOverlay",
+        pos = { (ScrW() / 2) - offset, (ScrH() / 2) - 20 },
+        color = NormalColor
+    })
+    
+    
+    
+end
+
+function messageOvControl()
+    
+    if (messageOverlay.text != "") && (messageOverlay.time > CurTime()) then 
+        messageOv(messageOverlay.target, messageOverlay.text)
+    
+    
+    end
+
+end
+
+hook.Add("HUDPaint", "RobloxOverlay", messageOvControl)
 
 
 
