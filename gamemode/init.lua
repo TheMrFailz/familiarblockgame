@@ -11,6 +11,9 @@ include( "gamescript.lua")
 isAllowed_Build = true
 
 util.AddNetworkString( "client_ScreenMessage" )
+util.AddNetworkString( "client_SaveWorld" )
+util.AddNetworkString( "client_LoadWorld" )
+util.AddNetworkString( "dupeTransfer" )
 
 function messageOverlay(ply, message)
     if IsValid(ply) then
@@ -27,6 +30,7 @@ concommand.Add("screenything", function( ply, cmd, args, argStr)
     messageOverlay(ply, argStr)
     print(argStr)
 end)
+
 
  
 function GM:PlayerDeathSound()
@@ -211,18 +215,52 @@ function blockdelete(ply, lookent)
     
 end
 
+
+
 local bigtable = {}
+local recievedDupeData = {}
+
+duplicator.Allow("roblox_brick_*")
+
+function worldSaverThing(ply, worldTable)
+    if IsValid(ply) then
+        net.Start("client_SaveWorld")
+        net.WriteEntity(ply)
+        net.WriteTable(worldTable)
+        --net.WriteInt(delay)
+        net.Send(ply)
+        --print("run2")
+    end
+
+end
+
+function worldLoadThing(ply, args)
+    if IsValid(ply) then
+        net.Start("client_LoadWorld")
+        net.WriteEntity(ply)
+        --print(args)
+        net.WriteString(args)
+        net.Send(ply)
+    end
+
+end
 
 -- Map save thing
 function fbg_worldsave()
-    local worldObjTable = ents.FindByClass("roblox_brick_base")
+    bigtable = {}
+    local worldObjTable = ents.FindByClass("roblox_brick_*")
     local worldObjDat = {}
-    for i = 1, table.Count(worldObjTable) do
-        duplicator.Copy(worldObjTable[i], worldObjDat)
+    --PrintTable(worldObjTable)
+    --[[for i = 1, table.Count(worldObjTable) do
+        duplicator.Copy(worldObjTable[i])
         
-    end
+    end]]
     
-    bigtable = worldObjDat
+    bigtable = duplicator.CopyEnts(worldObjTable)
+    --PrintTable(bigtable)
+    worldSaverThing(Entity(1), bigtable) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.
+    --PrintTable(bigtable)
+    
     print("SAVED")
 end
 
@@ -230,8 +268,30 @@ concommand.Add("fbg_worldsave", fbg_worldsave)
 
 -- Map load thing
 
-function fbg_worldload()
-    duplicator.Paste(Entity(1), bigtable, bigtable)
+
+
+net.Receive("dupeTransfer", function(len, pl)
+    recievedDupeData = net.ReadTable()
+    --PrintTable(recievedDupeData)
+
+end)
+
+function fbg_worldload(ply, file)
+    -- DONT ADD THE FOLDER OR FILE EXTENSION
+    --print(file[1])
+    --print(ply)
+    worldLoadThing(ply, file[1])
+    
+    duplicator.SetLocalPos(Vector(0,0,0))
+    duplicator.SetLocalAng(Angle(0,0,0))
+    
+    
+    
+    duplicator.Paste( ply, recievedDupeData.Entities, recievedDupeData.Constraints)
+    
     print("DING")
 end
-concommand.Add("fbg_worldload", fbg_worldload)
+concommand.Add("fbg_worldload", function(ply, cmd, args)
+    fbg_worldload(ply, args)
+    end)
+

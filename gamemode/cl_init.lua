@@ -59,6 +59,60 @@ net.Receive("client_ScreenMessage", function()
     --print("Hello!")
 end)
 
+function magicDupeMachine(dupeTable)
+    local idunno = ""
+    local convertedTable = util.TableToJSON(dupeTable, false)
+    local compressed = util.Compress(convertedTable)
+    --print(dupeTable)
+    --print(convertedTable)
+    
+    --PrintTable(dupeTable)
+    --print("PREPPIN BUTTHOLE")
+    
+    engine.WriteDupe(compressed,idunno)
+
+end
+
+net.Receive("client_SaveWorld", function()
+    local ply = net.ReadEntity()
+    local message = net.ReadTable()
+    if LocalPlayer() == ply then
+        --print("Yeet!")
+        magicDupeMachine(message)
+    end
+end)
+
+function sendOurDupeDataBack(dupeDat)
+    net.Start("dupeTransfer")
+        net.WriteTable(dupeDat)
+    net.SendToServer()
+    
+end
+
+net.Receive("client_LoadWorld", function()
+    local ply = net.ReadEntity()
+    local file = net.ReadString()
+    print(file)
+    
+    
+    
+    if LocalPlayer() == ply then
+        
+        --"dupes/782bb43420960a1fcf951803a19dc462.dupe"
+        print("dupes/" .. file .. ".dupe")
+        local fileNameOpen = "dupes/" .. file .. ".dupe"
+        local dupeData = engine.OpenDupe(fileNameOpen)
+        --PrintTable(dupeData)
+        dupeData = util.Decompress(dupeData.data)
+        --print(dupeData)
+        dupeData = util.JSONToTable(dupeData)
+        --PrintTable(dupeData)
+        sendOurDupeDataBack(dupeData)
+        
+        
+    end
+end)
+
 function messageOv(ply, message)
     
     
