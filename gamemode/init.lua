@@ -3,6 +3,7 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "roblox_guy.lua" )
 AddCSLuaFile( "robloxhud.lua")
 AddCSLuaFile( "robloxchat.lua")
+AddCSLuaFile( "buildmode.lua")
 AddCSLuaFile( "camerastuff.lua")
 include( "shared.lua" )
 include( "roblox_guy.lua")
@@ -101,10 +102,36 @@ function GM:PlayerSpawn(ply)
     if ply:Team() == 2 then
         print("Build mode player spawned!")
         ply:Spectate( OBS_MODE_ROAMING )
+        
         ply:Give("fbg_blockgun")
+        ply:Give("fbg_colorgun")
+        ply:Give("fbg_movegun")
+        ply:Give("fbg_resizegun")
+        
+        umsg.Start("openBuildControls", ply)
+        umsg.End() 
         
     end
     
+
+end
+
+
+
+
+function GM:PlayerButtonDown(ply, button)
+    -- THIS IS TO FIX THE DUMB SPECTATOR NO SWEPS MEME
+    if (button >= 2) && (button <= 10) then
+        if ply:Team() == 2 then
+            local weaponsTable = ply:GetWeapons()
+            ply:UnSpectate()
+            ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
+            --print(weaponsTable[button - 1]:GetClass())
+            ply:Spectate( OBS_MODE_ROAMING )
+        end
+        
+    end
+
 
 end
 
@@ -311,6 +338,27 @@ function blockscroll(ent, dir, side)
             ent:SetPos(ent:LocalToWorld(Vector(0,0,-30)))
         end
     end
+
+end
+
+function brickcopy(ent, newpos)
+    local newModel = ent:GetModel()
+    local newColor = ent:GetColor()
+    
+    local newProp = ents.Create("roblox_brick_base")
+    if (!IsValid( newProp )) then return end
+    
+    newProp:SetModel(newModel)
+    newProp:SetPos(newpos)
+    newProp:Spawn()
+    
+    local phys = newProp:GetPhysicsObject()
+	if (phys:IsValid()) then
+		phys:Wake()
+	end
+    
+    newProp:GetPhysicsObject():EnableMotion(false)
+
 
 end
 

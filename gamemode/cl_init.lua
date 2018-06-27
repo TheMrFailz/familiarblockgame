@@ -2,6 +2,7 @@ include( "shared.lua" )
 include( "robloxhud.lua")
 include( "robloxchat.lua")
 include( "camerastuff.lua")
+include( "buildmode.lua")
 
 hook.Add('OnContextMenuOpen', 'NoContext4u', function()return false end)
 local hide = {
@@ -45,6 +46,8 @@ end
 local messageOverlay = {}
 messageOverlay.text = ""
 messageOverlay.time = 0
+
+usermessage.Hook("openBuildControls", enableBuildControls)
 
 
 net.Receive("client_ScreenMessage", function()

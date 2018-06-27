@@ -1,4 +1,4 @@
-SWEP.PrintName			= "Move Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
+SWEP.PrintName			= "Copy Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
 SWEP.Author			= "TheMrFailz" -- These two options will be shown when you have the weapon highlighted in the weapon selection menu
 
 SWEP.Spawnable = true
@@ -35,17 +35,17 @@ SWEP.ViewModelBoneMods = {}
 
 
 local Active = 0
-local grabbedent2
+local grabbedent3
 local lookdat2
-local aimpos2
-local aiment2
+local aimpos3
+local aiment3
 
 function SWEP:Think()
     if SERVER then
         lookdat2 = self.Owner:GetEyeTrace()
-        aimpos2 = lookdat2.HitPos
+        aimpos3 = lookdat2.HitPos
         if lookdat2.Entity:IsValid() then
-            aiment2 = lookdat2.Entity
+            aiment3 = lookdat2.Entity
         end
         
         
@@ -66,10 +66,10 @@ function SWEP:PrimaryAttack()
     if SERVER then
         self.Weapon:EmitSound(self.Primary.Sound)
         
-        if grabbedent2:IsValid() then
-            local movepos = brickposgenerator(aimpos2)
+        if grabbedent3:IsValid() then
+            local movepos = brickposgenerator(aimpos3)
             
-            grabbedent2:SetPos(movepos - Vector(0,0,6))
+            brickcopy(grabbedent3, movepos)
         end
         
     
@@ -81,13 +81,13 @@ end
 
 function SWEP:SecondaryAttack()
     
-    local seenthing = aiment2:GetClass()
+    local seenthing = aiment3:GetClass()
     
     
     if string.find(seenthing, "roblox_brick_") != nil then
         
-        if aiment2 != grabbedent2 then
-            grabbedent2 = aiment2
+        if aiment3 != grabbedent3 then
+            grabbedent3 = aiment3
             print("Snagged")
             
             if CLIENT then
@@ -95,7 +95,7 @@ function SWEP:SecondaryAttack()
             
             end
         else
-            grabbedent2 = nil
+            grabbedent3 = nil
         end
     
     end
