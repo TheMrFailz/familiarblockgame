@@ -7,9 +7,9 @@ SWEP.Category = "Roblox Gamemode Sweps"
 
 SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 1
-SWEP.Primary.Automatic		= true
+SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo		= "none"
-SWEP.Primary.Delay          = 0.2
+SWEP.Primary.Delay          = 0.03
 SWEP.Primary.Sound          = ""
 
 SWEP.Secondary.ClipSize		= -1
@@ -37,51 +37,179 @@ local S_Color = Color(0,0,0,255)
 
 
 local Active = 0
-function ColorSet(Active)
-    local R = S_Color.r
-    local G = S_Color.g
-    local B = S_Color.b
-    
+local grabbedent
+local grabbedball
+local lookdat
+local aimpos
+local aiment
+local scrolldir = 1
+local compareVec
 
-
-    if Active == 0 then
-        if R >= 255 then
-            S_Color = Color(0, G, B)
-        else
-            S_Color = Color(R + 10, G, B)
+function SWEP:Think()
+    if SERVER then
+        lookdat = self.Owner:GetEyeTrace()
+        aimpos = lookdat.HitPos
+        if lookdat.Entity:IsValid() then
+            aiment = lookdat.Entity
         end
-    elseif Active == 1 then
-        if G >= 255 then
-            S_Color = Color(R, 0, B)
-        else
-            S_Color = Color(R, G + 10,  B)
-        end
-    elseif Active == 2 then
-        if B >= 255 then
-            S_Color = Color(R, G, 0)
-        else
-            S_Color = Color(R, G, B + 10)
-        end
+        
+        
+        
+        
     end
-    --print(S_Color)
-    return S_Color
+    
+    
 end
 
-function SWEP:PrimaryAttack()
-    --if ( !self:CanPrimaryAttack() ) then return end
-    if SERVER then
-    self.Weapon:EmitSound(self.Primary.Sound)
+
+
+local sizeballslist = {}
+
+function setsizeballs(positionInt)
+    local ball
+    local Pos = Vector(0,0,0)
     
-    local lookdat = self.Owner:GetEyeTrace()
-    local aimpos = lookdat.Entity
-    ColorSet(Active)
-    blockcolor(self.Owner,aimpos, S_Color) 
+    if positionInt == 1 then
+        Pos = grabbedent:LocalToWorld(Vector(30,0,0))
+    elseif positionInt == 2 then
+        Pos = grabbedent:LocalToWorld(Vector(0,30,0))
+    elseif positionInt == 3 then
+        Pos = grabbedent:LocalToWorld(Vector(0,0,30))
     
-    self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
     end
+    
+    if SERVER then
+        
+        ball = ents.Create("fbg_grabball")
+        
+        ball:SetPos(Pos)
+        
+        ball:Spawn()
+        
+        
+        table.insert(sizeballslist,positionInt,ball) 
+    end
+    
+    
+    
+end
+
+function sizeballs()
+    
+    setsizeballs(1)
+    setsizeballs(2)
+    setsizeballs(3)
+    
+end
+
+function removesizeballs()
+    
+    for i = 1, table.Count(sizeballslist) do
+        if sizeballslist[i]:IsValid() then
+            
+            sizeballslist[i]:Remove()
+        end
+    end
+
+end
+
+
+
+
+function SWEP:PrimaryAttack()
+    
+    if SERVER then
+        self.Weapon:EmitSound(self.Primary.Sound)
+        
+        if aiment:GetClass() == "fbg_grabball" then
+            grabbedball = aiment
+            
+            local studsize = 11
+            
+            if aiment == sizeballslist[1] then
+                grabbedball:SetPos(grabbedball:LocalToWorld(Vector(11,0,0)))
+            elseif aiment == sizeballslist[2] then
+                grabbedball:SetPos(grabbedball:LocalToWorld(Vector(0,11,0)))
+            elseif aiment == sizeballslist[3] then
+                grabbedball:SetPos(grabbedball:LocalToWorld(Vector(0,0,11)))
+            end
+            
+            local compareVec1 = grabbedent:GetPos() - sizeballslist[1]:GetPos()
+            local compareVec2 = grabbedent:GetPos() - sizeballslist[2]:GetPos()
+            local compareVec3 = grabbedent:GetPos() - sizeballslist[3]:GetPos()
+            
+            
+            local x = math.Round(math.abs(math.Clamp(compareVec1.x / studsize, -10000000000, 10000000)))
+            local y = math.Round(math.abs(math.Clamp(compareVec2.y / studsize, -1000000000000, 10000000)))
+            local z = math.Round(math.abs(math.Clamp(compareVec3.z / studsize, -100000000000, 10000000)))
+            print(x)
+            print(y)
+            print(z)
+            
+            blockresize(grabbedent, y, x, z)
+            
+            
+        end
+        
+    
+    
+    --blockresize(aimpos, 4, 2, 1)
+    
+    end
+    --movebal(grabbedball) 
+    self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
 end
 
 function SWEP:SecondaryAttack()
+    
+    local seenthing = aiment:GetClass()
+    
+    if string.find(seenthing, "fbg_grabball") != nil then
+        grabbedball = aiment
+            
+            local studsize = 11
+            
+            if aiment == sizeballslist[1] then
+                grabbedball:SetPos(grabbedball:LocalToWorld(Vector(-11,0,0)))
+            elseif aiment == sizeballslist[2] then
+                grabbedball:SetPos(grabbedball:LocalToWorld(Vector(0,-11,0)))
+            elseif aiment == sizeballslist[3] then
+                grabbedball:SetPos(grabbedball:LocalToWorld(Vector(0,0,-11)))
+            end
+            
+            local compareVec1 = grabbedent:GetPos() - sizeballslist[1]:GetPos()
+            local compareVec2 = grabbedent:GetPos() - sizeballslist[2]:GetPos()
+            local compareVec3 = grabbedent:GetPos() - sizeballslist[3]:GetPos()
+            
+            
+            local x = math.Round(math.abs(math.Clamp(compareVec1.x / studsize, -10000000000, 10000000)))
+            local y = math.Round(math.abs(math.Clamp(compareVec2.y / studsize, -1000000000000, 10000000)))
+            local z = math.Round(math.abs(math.Clamp(compareVec3.z / studsize, -100000000000, 10000000)))
+            print(x)
+            print(y)
+            print(z)
+            
+            blockresize(grabbedent, y, x, z)
+    end
+    
+    
+    if string.find(seenthing, "roblox_brick_") != nil then
+        print("mm")
+        if aiment != grabbedent then
+            grabbedent = aiment
+            
+            sizeballs()
+            if CLIENT then
+                
+            
+            end
+        else
+            grabbedent = nil
+            removesizeballs()
+        end
+    
+    end
+    
     
     if Active >= 2 then
         Active = 0
@@ -90,10 +218,14 @@ function SWEP:SecondaryAttack()
     end
 end
 
+
+
 function SWEP:Reload()
     
 
 end
+
+
 
 function SWEP:Initialize()
 

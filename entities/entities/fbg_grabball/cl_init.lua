@@ -11,14 +11,14 @@ function ENT:Draw()
                                   -- Use this when you need to add to the rendering.
     --self:DrawEntityOutline( 1.0 ) -- Draw an outline of 1 world unit.
     
-    local stretchtext = Material("models/bricktextures/stud_white.vtf", "translucent")
+    local stretchtext = Material("models/bricktextures/stud_white.vtf", "noclamp")
     local stretchtext2 = stretchtext:GetName()
     
     self:SetMaterial(stretchtext2)
     
     
     
-    --self:SetColor(Color(48,127,255,255))
+    self:SetColor(Color(0,0,255,200))
     self:DrawModel()       -- Draw the model.
  
     --AddWorldTip( self:EntIndex(), "BATHTUB TIME!", 0.5, self:GetPos(), self  ) -- Add an example tip.

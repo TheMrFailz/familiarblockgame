@@ -8,12 +8,28 @@ include( "shared.lua" )
 include( "roblox_guy.lua")
 include( "gamescript.lua") 
 
+--[[F A M I L I A R B L O C K G A M E
+        A H I D E O K O J I M A
+          P R O D U C T I O N
+
+    TL:DR: it's a roblox clone.
+    As far as I know all assets used
+    are freeware / royalty free.
+    Additionally, no code from Roblox
+    was used in the production of this
+    gamemode.
+    
+    Produced originally by TheMrFailz
+    for the 2018 Summer gamemode competition.
+    ]]
+
 isAllowed_Build = true
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
 util.AddNetworkString( "client_LoadWorld" )
 util.AddNetworkString( "dupeTransfer" )
+
 
 function messageOverlay(ply, message)
     if IsValid(ply) then
@@ -104,7 +120,16 @@ function GM:PlayerSetHandsModel( ply, ent )
 
 end
 
+-- BRICK RELATED CODE BEGINS HERE
+
 function brickposgenerator( pos)
+    --[[ This function can (and should) be used to:
+        Produce a grid location given a nearby
+        vector world position.
+        
+    ]]
+
+
     local maporigin = Vector(0,0,0)
     local outpos = Vector(0,0,0)
     local studsize = 11
@@ -123,6 +148,13 @@ function brickposgenerator( pos)
 end
 
 function brickgenerator( Length, Width, Height )
+    --[[ This function can (and should) be used to:
+        Produce a model name relative to the PHX
+        model pack that roughly matches the brick
+        specifications provided.
+        
+    ]]
+    
     local Model = ""
     
     local Le = ""
@@ -174,7 +206,19 @@ function brickgenerator( Length, Width, Height )
 
 end
 
+function brickMatrixGenerator(entity, length, width, height)
+    local blockS
+    
+    
+    
+end
+
 function blockinit(ply, lookpos)
+    --[[ This function can (and should) be used to:
+        Create a new brick entity at a location.
+        
+    ]]
+    
     --print("Success!")
     local newprop = ents.Create("roblox_brick_base")
     if (!IsValid( newprop )) then return end
@@ -195,27 +239,82 @@ function blockinit(ply, lookpos)
 end
 
 function blockcolor(ply, lookent, Color)
-    if (!lookent:IsValid()) then return end
-    --if (lookent:GetOwner() == ply) then 
-        lookent:SetColor(Color)
-        print("Made color")
-        print(Color)
+    --[[ This function can (and should) be used to:
+        Change a particular brick's color.
         
-    --end
+    ]]
     
+    
+    if (!lookent:IsValid()) then return end
+    lookent:SetColor(Color)
+    print("Made color")
+    print(Color)
+
 
 end
 
 function blockdelete(ply, lookent)
-    if (!lookent:IsValid()) then return end
-    --if (lookent:GetOwner() == ply) then 
-        lookent:Remove()
+    --[[ This function can (and should) be used to:
+        Delete a particular brick.
         
-    --end
+    ]]
     
+    if (!lookent:IsValid()) then return end
+    lookent:Remove()
+
 end
 
+function blockresize(lookent, length, width, height)
+    --[[ This function can (and should) be used to:
+        Resize a specific brick given new needed
+        length/width/height specifications.
+        
+    ]]
+    local originalPos = lookent:GetModelBounds(mins)
+    local newPos = Vector(0,0,0)
+    local newModel = brickgenerator(length, width, height)
+    
+    --print(newModel)
+    if util.IsValidModel(newModel) == true then
+    
+        lookent:SetModel(newModel)
+        
+        lookent:Activate()
+        lookent:PhysicsInit(SOLID_VPHYSICS)
+        local phys = lookent:GetPhysicsObject()
+        if (phys:IsValid()) then
+            phys:Wake()
+            phys:EnableMotion(false)
+        end
+        
+        newPos = lookent:LocalToWorld(originalPos)
+        --lookent:SetPos(newPos)
+    end
+end
 
+function blockscroll(ent, dir, side)
+    if dir == "forward" then
+        if scrolldir == 1 then
+            ent:SetPos(ent:LocalToWorld(Vector(30,0,0)))
+        elseif scrolldir == 2 then
+            ent:SetPos(ent:LocalToWorld(Vector(30,0,0)))
+        elseif scrolldir == 3 then
+            ent:SetPos(ent:LocalToWorld(Vector(30,0,0)))
+        end
+    end
+    if dir == "backward" then
+        if scrolldir == 1 then
+            ent:SetPos(ent:LocalToWorld(Vector(-30,0,0)))
+        elseif scrolldir == 2 then
+            ent:SetPos(ent:LocalToWorld(Vector(0,-30,0)))
+        elseif scrolldir == 3 then
+            ent:SetPos(ent:LocalToWorld(Vector(0,0,-30)))
+        end
+    end
+
+end
+
+-- TURN BACK WHILE YOU STILL CAN. WORLD SAVING CODE BEGINS HERE AND SWEET JESUS IT IS TERRIFYING!
 
 local bigtable = {}
 local recievedDupeData = {}
@@ -246,7 +345,7 @@ function worldLoadThing(ply, args)
 end
 
 -- Map save thing
-function fbg_worldsave()
+function fbg_worldsave(ply)
     bigtable = {}
     local worldObjTable = ents.FindByClass("roblox_brick_*")
     local worldObjDat = {}
@@ -258,13 +357,13 @@ function fbg_worldsave()
     
     bigtable = duplicator.CopyEnts(worldObjTable)
     --PrintTable(bigtable)
-    worldSaverThing(Entity(1), bigtable) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.
+    worldSaverThing(ply, bigtable) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.
     --PrintTable(bigtable)
     
     print("SAVED")
 end
 
-concommand.Add("fbg_worldsave", fbg_worldsave)
+concommand.Add("fbg_worldsave", fbg_worldsave(ply))
 
 -- Map load thing
 

@@ -1,4 +1,4 @@
-SWEP.PrintName			= "Mover Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
+SWEP.PrintName			= "Move Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
 SWEP.Author			= "TheMrFailz" -- These two options will be shown when you have the weapon highlighted in the weapon selection menu
 
 SWEP.Spawnable = true
@@ -7,9 +7,9 @@ SWEP.Category = "Roblox Gamemode Sweps"
 
 SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 1
-SWEP.Primary.Automatic		= true
+SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo		= "none"
-SWEP.Primary.Delay          = 0.2
+SWEP.Primary.Delay          = 0.03
 SWEP.Primary.Sound          = ""
 
 SWEP.Secondary.ClipSize		= -1
@@ -18,7 +18,7 @@ SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo		= "none"
 
 SWEP.Slot			= 0
-SWEP.SlotPos			= 3
+SWEP.SlotPos			= 5
 SWEP.DrawAmmo			= false
 SWEP.DrawCrosshair		= true
 
@@ -33,27 +33,73 @@ SWEP.ShowViewModel = false
 SWEP.ShowWorldModel = true
 SWEP.ViewModelBoneMods = {}
 
-local S_Color = Color(0,0,0,255)
-
 
 local Active = 0
+local grabbedent2
+local lookdat2
+local aimpos2
+local aiment2
+
+function SWEP:Think()
+    if SERVER then
+        lookdat2 = self.Owner:GetEyeTrace()
+        aimpos2 = lookdat2.HitPos
+        if lookdat2.Entity:IsValid() then
+            aiment2 = lookdat2.Entity
+        end
+        
+        
+        
+        
+    end
+    
+    
+end
+
+
+
+
 
 
 function SWEP:PrimaryAttack()
+    
     if SERVER then
-    --if ( !self:CanPrimaryAttack() ) then return end
-    self.Weapon:EmitSound(self.Primary.Sound)
+        self.Weapon:EmitSound(self.Primary.Sound)
+        
+        if grabbedent2:IsValid() then
+            local movepos = brickposgenerator(aimpos2)
+            
+            grabbedent2:SetPos(movepos)
+        end
+        
     
-    local lookdat = self.Owner:GetEyeTrace()
-    local aimpos = lookdat.Entity
     
     
-    
+    end 
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-    end
 end
 
 function SWEP:SecondaryAttack()
+    
+    local seenthing = aiment2:GetClass()
+    
+    
+    if string.find(seenthing, "roblox_brick_") != nil then
+        
+        if aiment2 != grabbedent2 then
+            grabbedent2 = aiment2
+            print("Snagged")
+            
+            if CLIENT then
+                
+            
+            end
+        else
+            grabbedent2 = nil
+        end
+    
+    end
+    
     
     if Active >= 2 then
         Active = 0
@@ -62,10 +108,14 @@ function SWEP:SecondaryAttack()
     end
 end
 
+
+
 function SWEP:Reload()
     
 
 end
+
+
 
 function SWEP:Initialize()
 

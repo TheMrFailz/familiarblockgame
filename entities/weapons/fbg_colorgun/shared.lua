@@ -68,7 +68,7 @@ function ColorSet(Active)
 end
 
 function SWEP:PrimaryAttack()
-    
+    if SERVER then
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
     
@@ -78,7 +78,7 @@ function SWEP:PrimaryAttack()
     blockcolor(self.Owner,aimpos, S_Color) 
     
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-    
+    end
 end
 
 function SWEP:SecondaryAttack()

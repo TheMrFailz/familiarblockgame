@@ -92,14 +92,14 @@ end
 net.Receive("client_LoadWorld", function()
     local ply = net.ReadEntity()
     local file = net.ReadString()
-    print(file)
+    --print(file)
     
     
     
     if LocalPlayer() == ply then
         
         --"dupes/782bb43420960a1fcf951803a19dc462.dupe"
-        print("dupes/" .. file .. ".dupe")
+        --print("dupes/" .. file .. ".dupe")
         local fileNameOpen = "dupes/" .. file .. ".dupe"
         local dupeData = engine.OpenDupe(fileNameOpen)
         --PrintTable(dupeData)
@@ -142,6 +142,5 @@ function messageOvControl()
 end
 
 hook.Add("HUDPaint", "RobloxOverlay", messageOvControl)
-
 
 
