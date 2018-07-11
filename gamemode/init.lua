@@ -107,6 +107,7 @@ function GM:PlayerSpawn(ply)
         ply:Give("fbg_colorgun")
         ply:Give("fbg_movegun")
         ply:Give("fbg_resizegun")
+        ply:Give("fbg_copygun")
         
         umsg.Start("openBuildControls", ply)
         umsg.End() 
@@ -145,6 +146,26 @@ function GM:PlayerSetHandsModel( ply, ent )
 		ent:SetBodyGroups( info.body )
 	end
 
+end
+
+function rightAngleFind(ang)
+    print("Input ang: ")
+    print(ang)
+    --ang = ang + 180
+    
+    if ang <= 45 && ang >= -45 then
+        finalAngle = 0
+    elseif ang > 45 && ang <= 135 then
+        finalAngle = 90
+    elseif ang < -45 && ang >= -135 then
+        finalAngle = -90
+    elseif ang > 135 && ang <= 180 then
+        finalAngle = 180
+    elseif ang < -135 && ang >= -180 then
+        finalAngle = 180
+    end
+    
+    return finalAngle
 end
 
 -- BRICK RELATED CODE BEGINS HERE
@@ -274,8 +295,8 @@ function blockcolor(ply, lookent, Color)
     
     if (!lookent:IsValid()) then return end
     lookent:SetColor(Color)
-    print("Made color")
-    print(Color)
+    --print("Made color")
+    --print(Color)
 
 
 end
@@ -341,16 +362,43 @@ function blockscroll(ent, dir, side)
 
 end
 
-function brickcopy(ent, newpos)
+function brickgroundheight(ent)
+    local dist = 0
+    local splodetable = string.Explode("x", ent:GetModel(), false)
+    local brickheight = tonumber(string.StripExtension(splodetable[3]))
+    --print(ent:GetModel())
+    --PrintTable(splodetable)
+    --print(string.StripExtension(splodetable[3]))
+    print(brickheight)
+    if brickheight == 25 then
+        dist = 0
+    else
+        dist = brickheight * 1
+    
+    end
+    --print("dist = " .. dist)
+    
+    
+    return dist
+end
+
+
+function brickcopy(ent, newpos, ang)
     local newModel = ent:GetModel()
     local newColor = ent:GetColor()
+    local newAdjustedPos = brickposgenerator(newpos) + Vector(0,0,brickgroundheight(ent))
     
     local newProp = ents.Create("roblox_brick_base")
     if (!IsValid( newProp )) then return end
     
     newProp:SetModel(newModel)
-    newProp:SetPos(newpos)
+    
+    newHeight = ent:GetPos() + Vector(0,0,25)
+    
+    newProp:SetPos(newAdjustedPos)
+    newProp:SetAngles(Angle(Vector(0,ang,0)))
     newProp:Spawn()
+    newProp:SetColor(newColor)
     
     local phys = newProp:GetPhysicsObject()
 	if (phys:IsValid()) then
@@ -361,6 +409,7 @@ function brickcopy(ent, newpos)
 
 
 end
+
 
 -- TURN BACK WHILE YOU STILL CAN. WORLD SAVING CODE BEGINS HERE AND SWEET JESUS IT IS TERRIFYING!
 
@@ -408,7 +457,7 @@ function fbg_worldsave(ply)
     worldSaverThing(ply, bigtable) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.
     --PrintTable(bigtable)
     
-    print("SAVED")
+    --print("SAVED")
 end
 
 concommand.Add("fbg_worldsave", fbg_worldsave(ply))

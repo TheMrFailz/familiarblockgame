@@ -1,4 +1,4 @@
-SWEP.PrintName			= "Copy Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
+SWEP.PrintName			= "Paintball Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
 SWEP.Author			= "TheMrFailz" -- These two options will be shown when you have the weapon highlighted in the weapon selection menu
 
 SWEP.Spawnable = true
@@ -9,7 +9,7 @@ SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 1
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo		= "none"
-SWEP.Primary.Delay          = 0.03
+SWEP.Primary.Delay          = 3
 SWEP.Primary.Sound          = ""
 
 SWEP.Secondary.ClipSize		= -1
@@ -17,12 +17,12 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo		= "none"
 
-SWEP.Slot			= 0
-SWEP.SlotPos			= 5
+SWEP.Slot			= 4
+SWEP.SlotPos			= 1
 SWEP.DrawAmmo			= false
-SWEP.DrawCrosshair		= true
+SWEP.DrawCrosshair		= false
 
-SWEP.ViewModel			= ""
+SWEP.ViewModel			= "models/weapons/c_crowbar.mdl"
 SWEP.WorldModel			= "models/weapons/w_pistol.mdl"
 
 SWEP.HoldType = "pistol"
@@ -33,96 +33,42 @@ SWEP.ShowViewModel = false
 SWEP.ShowWorldModel = true
 SWEP.ViewModelBoneMods = {}
 
+SWEP.VElements = {
+	["rocket_launcher"] = { type = "Model", model = "models/roblox_weapons/rocketlauncher/weapon_rblx_rocketlauncher.mdl", bone = "ValveBiped.Bip01_L_Forearm", rel = "", pos = Vector(-25.459, -2.681, -4.486), angle = Angle(-5.86, 88.212, -15.966), size = Vector(2.617, 2.617, 2.617), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+}
 
-local Active = 0
-local grabbedent3
-local lookdat2
-local aimpos3
-local aiment3
-
-function SWEP:Think()
-    if SERVER then
-        lookdat2 = self.Owner:GetEyeTrace()
-        aimpos3 = lookdat2.HitPos
-        if lookdat2.Entity:IsValid() then
-            aiment3 = lookdat2.Entity
-        end
-        
-        
-        
-        
-    end
-    
-    
-end
-
-
-
-
-
+SWEP.WElements = {
+	["rocket"] = { type = "Model", model = "models/roblox_weapons/rocketlauncher/weapon_rblx_rocketlauncher.mdl", bone = "ValveBiped.Anim_Attachment_RH", rel = "", pos = Vector(-6.937, -11.771, -4.824), angle = Angle(-43.936, -177.956, 102.056), size = Vector(3.986, 3.986, 3.986), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+}
 
 function SWEP:PrimaryAttack()
-    
+    --if ( !self:CanPrimaryAttack() ) then return end
+    self.Weapon:EmitSound(self.Primary.Sound)
     if SERVER then
-        self.Weapon:EmitSound(self.Primary.Sound)
-        
-        if grabbedent3:IsValid() then
-            local movepos = brickposgenerator(aimpos3)
-            
-            
-            local aimang = rightAngleFind(self.Owner:GetAngles().y)
-            print("Eye thing: " .. self.Owner:GetAngles().y)
-            print(aimang)
-            
-            brickcopy(grabbedent3, aimpos3, aimang)
-            
-            
-        end
-        
+    local rocket = ents.Create( "roblox_rocket" )
+    if(!IsValid(rocket)) then return end
+    local spawnpos = self.Owner:LocalToWorld( Vector(70,0,60))
+    rocket:SetPos(spawnpos)
     
+    rocket:Spawn() 
     
+    local physics = rocket:GetPhysicsObject()
+    physics:Wake()
+    physics:EnableMotion( true )
+    physics:EnableGravity( false )
+    physics:EnableDrag( false )
+    physics:SetVelocity(self.Owner:GetAimVector()*1000)
     
-    end 
+    --print(self.Owner:EyeAngles())
+    print(self.Owner:GetViewEntity():GetPos())
+    
+    local FaceAngles = self.Owner:EyeAngles()
+    
+    rocket:SetAngles(Angle(0,FaceAngles.yaw + 90,FaceAngles.pitch))
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-end
-
-function SWEP:SecondaryAttack()
-    
-    local seenthing = aiment3:GetClass()
-    
-    
-    if string.find(seenthing, "roblox_brick_") != nil then
-        
-        if aiment3 != grabbedent3 then
-            grabbedent3 = aiment3
-            print("Snagged")
-            
-            if CLIENT then
-                
-            
-            end
-        else
-            grabbedent3 = nil
-        end
-    
-    end
-    
-    
-    if Active >= 2 then
-        Active = 0
-    else
-        Active = Active + 1
+    --rocket:SetAngles(self.Owner:GetAimVector():Angle())
     end
 end
-
-
-
-function SWEP:Reload()
-    
-
-end
-
-
 
 function SWEP:Initialize()
 

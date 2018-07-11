@@ -170,7 +170,8 @@ function SWEP:SecondaryAttack()
             local studsize = 11
             
             if aiment == sizeballslist[1] then
-                grabbedball:SetPos(grabbedball:LocalToWorld(Vector(-11,0,0)))
+                grabbedball:SetPos(grabbedball:
+                LocalToWorld(Vector(-11,0,0)))
             elseif aiment == sizeballslist[2] then
                 grabbedball:SetPos(grabbedball:LocalToWorld(Vector(0,-11,0)))
             elseif aiment == sizeballslist[3] then

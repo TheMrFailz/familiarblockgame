@@ -69,7 +69,14 @@ function SWEP:PrimaryAttack()
         if grabbedent2:IsValid() then
             local movepos = brickposgenerator(aimpos2)
             
-            grabbedent2:SetPos(movepos - Vector(0,0,6))
+            local settang = rightAngleFind(self.Owner:GetAngles().y)
+            
+            
+            local dist = brickgroundheight(grabbedent2)
+            grabbedent2:SetPos(movepos + Vector(0,0,dist))
+            grabbedent2:SetAngles(Angle(0,settang,0))
+            --print("prop angles :")
+            --print(grabbedent2:GetAngles())
         end
         
     
@@ -82,7 +89,6 @@ end
 function SWEP:SecondaryAttack()
     
     local seenthing = aiment2:GetClass()
-    
     
     if string.find(seenthing, "roblox_brick_") != nil then
         
