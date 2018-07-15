@@ -87,14 +87,14 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    
+    if SERVER then
     local seenthing = aiment2:GetClass()
     
     if string.find(seenthing, "roblox_brick_") != nil then
         
         if aiment2 != grabbedent2 then
             grabbedent2 = aiment2
-            print("Snagged")
+            --print("Snagged")
             
             if CLIENT then
                 
@@ -111,6 +111,7 @@ function SWEP:SecondaryAttack()
         Active = 0
     else
         Active = Active + 1
+    end
     end
 end
 

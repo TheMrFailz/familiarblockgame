@@ -7,7 +7,9 @@ AddCSLuaFile( "buildmode.lua")
 AddCSLuaFile( "camerastuff.lua")
 include( "shared.lua" )
 include( "roblox_guy.lua")
-include( "gamescript.lua") 
+include( "gamescript.lua")
+include( "textureincludes.lua")
+
 
 --[[F A M I L I A R B L O C K G A M E
         A H I D E O K O J I M A
@@ -362,22 +364,67 @@ function blockscroll(ent, dir, side)
 
 end
 
+function modeltoints(modelname, desireddimension)
+    --local modelName = string.StripExtension(string.Replace(modelname, "models/hunter/blocks/cube", ""))
+    local splodetable
+    
+    if !istable(modelname) && string.find(modelname, "models/hunter/blocks/cube")  != nil then
+        local modelName = string.StripExtension(string.Replace(modelname, "models/hunter/blocks/cube", ""))
+        splodetable = string.Explode("x", modelName, false)
+        
+    else
+        splodetable = string.Explode("x", modelname[1], false)
+    end
+    
+    
+    --PrintTable(splodetable)
+    local x, y, z
+    
+    x = tonumber(splodetable[1])
+    y = tonumber(splodetable[2])
+    z = tonumber(splodetable[3])
+    
+    
+    
+    if desireddimension == 1 then
+        
+        return x
+    elseif desireddimension == 2 then
+        
+        return y
+    elseif desireddimension == 3 then
+        
+        return z
+        
+    end
+    
+    --local brickheight = tonumber(string.StripExtension(splodetable[3]))
+    
+    
+    
+end
+
 function brickgroundheight(ent)
     local dist = 0
-    local splodetable = string.Explode("x", ent:GetModel(), false)
-    local brickheight = tonumber(string.StripExtension(splodetable[3]))
-    --print(ent:GetModel())
-    --PrintTable(splodetable)
-    --print(string.StripExtension(splodetable[3]))
-    print(brickheight)
+    --local splodetable = string.Explode("x", ent:GetModel(), false)
+    --local brickheight = tonumber(string.StripExtension(splodetable[3]))
+    
+    
+    local brickheight = modeltoints(ent:GetModel(), 3)
+    
     if brickheight == 25 then
         dist = 0
+    elseif brickheight == 5 then
+        dist = 1 * 6
+    elseif brickheight == 75 then
+        dist = 2 * 6
     else
-        dist = brickheight * 1
+    
+        dist = (brickheight * 17)
     
     end
     --print("dist = " .. dist)
-    
+    --modeltoints(ent:GetModel(), 1)
     
     return dist
 end
@@ -410,6 +457,26 @@ function brickcopy(ent, newpos, ang)
 
 end
 
+function resizelookat(ply, size)
+    if IsValid(ply) then
+    
+    print(size)
+    
+    local lookedTable = ply:GetEyeTrace()
+    local brickToSize = lookedTable.Entity
+    local x = modeltoints(size, 1)
+    local y = modeltoints(size, 2)
+    local z = modeltoints(size, 3)
+    
+    blockresize(brickToSize, x, y, z)
+    print("DONE!")
+
+    end
+end
+
+concommand.Add("fbg_brickresize", function(ply, cmd, args)
+    resizelookat(ply, args)
+    end)
 
 -- TURN BACK WHILE YOU STILL CAN. WORLD SAVING CODE BEGINS HERE AND SWEET JESUS IT IS TERRIFYING!
 

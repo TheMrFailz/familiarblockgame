@@ -54,9 +54,9 @@ function SWEP:SecondaryAttack()
     
     local lookdat = self.Owner:GetEyeTrace()
     local aiment = lookdat.Entity
-    
+    if SERVER then
     blockdelete(self.Owner,aiment) 
-    
+    end
     self:SetNextSecondaryFire(CurTime() + self.Primary.Delay)
 
 end

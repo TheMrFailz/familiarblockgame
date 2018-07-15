@@ -142,9 +142,9 @@ function SWEP:PrimaryAttack()
             local x = math.Round(math.abs(math.Clamp(compareVec1.x / studsize, -10000000000, 10000000)))
             local y = math.Round(math.abs(math.Clamp(compareVec2.y / studsize, -1000000000000, 10000000)))
             local z = math.Round(math.abs(math.Clamp(compareVec3.z / studsize, -100000000000, 10000000)))
-            print(x)
-            print(y)
-            print(z)
+            --print(x)
+            --print(y)
+            --print(z)
             
             blockresize(grabbedent, y, x, z)
             
@@ -161,7 +161,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    
+    if SERVER then 
     local seenthing = aiment:GetClass()
     
     if string.find(seenthing, "fbg_grabball") != nil then
@@ -186,16 +186,16 @@ function SWEP:SecondaryAttack()
             local x = math.Round(math.abs(math.Clamp(compareVec1.x / studsize, -10000000000, 10000000)))
             local y = math.Round(math.abs(math.Clamp(compareVec2.y / studsize, -1000000000000, 10000000)))
             local z = math.Round(math.abs(math.Clamp(compareVec3.z / studsize, -100000000000, 10000000)))
-            print(x)
-            print(y)
-            print(z)
+            ---print(x)
+            --print(y)
+            --print(z)
             
             blockresize(grabbedent, y, x, z)
     end
     
     
     if string.find(seenthing, "roblox_brick_") != nil then
-        print("mm")
+        --print("mm")
         if aiment != grabbedent then
             grabbedent = aiment
             
@@ -216,6 +216,7 @@ function SWEP:SecondaryAttack()
         Active = 0
     else
         Active = Active + 1
+    end
     end
 end
 

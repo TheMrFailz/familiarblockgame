@@ -18,7 +18,7 @@ hook.Add("PlayerButtonDown", "ButtonyThings", function(ply, button)
     
     if ((button - 1) >= 0 ) && ((button - 1) <= 9) then
         if button - 2 < table.Count(weaponsTable) then
-            ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
+            --ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
         end
     end
     
@@ -32,7 +32,7 @@ function brickMatrixGenerator(entity, length, width, height)
     local blockMatrix = Matrix()
     
     blockMatrix:Scale(blockScale)
-    print("nice")
+    --print("nice")
     entity:EnableMatrix("RenderMultiply", blockMatrix)
     end
     

@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "bricks/fbg_lava"
+	"$surfaceprop" "MudSlipperySlime"
+}

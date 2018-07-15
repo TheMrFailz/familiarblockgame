@@ -1,0 +1,1 @@
+resource.AddFile( "bricks/lava.png" )
