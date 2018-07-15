@@ -11,18 +11,18 @@ function GM:Initialize()
 end
 
 hook.Add("PlayerButtonDown", "ButtonyThings", function(ply, button)
-    
+    if SERVER then
     local weaponsTable = ply:GetWeapons()
     local numOfWeps = table.Count(weaponsTable)
     
     
     if ((button - 1) >= 0 ) && ((button - 1) <= 9) then
         if button - 2 < table.Count(weaponsTable) then
-            --ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
+            ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
         end
     end
     
-
+    end
 end)
 
 

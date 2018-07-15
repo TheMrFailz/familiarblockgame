@@ -30,7 +30,6 @@ isAllowed_Build = true
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
-util.AddNetworkString( "client_LoadWorld" )
 util.AddNetworkString( "dupeTransfer" )
 
 
@@ -480,81 +479,101 @@ concommand.Add("fbg_brickresize", function(ply, cmd, args)
 
 -- TURN BACK WHILE YOU STILL CAN. WORLD SAVING CODE BEGINS HERE AND SWEET JESUS IT IS TERRIFYING!
 
-local bigtable = {}
-local recievedDupeData = {}
+local bigtable = {} 
 
 duplicator.Allow("roblox_brick_*")
 
-function worldSaverThing(ply, worldTable)
+function worldSaverThing(ply, worldTable, fileName)
     if IsValid(ply) then
         net.Start("client_SaveWorld")
         net.WriteEntity(ply)
         net.WriteTable(worldTable)
-        --net.WriteInt(delay)
+        net.WriteString(fileName)
         net.Send(ply)
-        --print("run2")
+        
     end
 
 end
 
-function worldLoadThing(ply, args)
-    if IsValid(ply) then
-        net.Start("client_LoadWorld")
-        net.WriteEntity(ply)
-        --print(args)
-        net.WriteString(args)
-        net.Send(ply)
-    end
 
-end
+--[[ Map Saving Code.
+     UPDATE 15/7/2018 (EURODATE):
+    Re-wrote the world saving/loading code. TL:DR I originally loaded it from the client for some retarded reason.
+    
+    INFORMATION:
+    This code is used to save your current world that you've made into a text file that can be loaded later.
+    IT IS NOT MEANT TO BE USED IN MULTIPLAYER AT ALL. FAILURE TO DO SO WILL CAUSE HEADACHES AND ERRORS!
+    
+    Feed the command a filename (without folders or extensions). Will be saved to /data/ as fbg_(name).txt.
+    MUST BE TRANSFERRED LATER MANUALLY TO THE SERVER'S familiarblockgame/content/data/mapdata/ folder.
 
--- Map save thing
-function fbg_worldsave(ply)
+
+]]
+
+concommand.Add("fbg_worldsave", function(ply, cmd, args)
     bigtable = {}
     local worldObjTable = ents.FindByClass("roblox_brick_*")
     local worldObjDat = {}
-    --PrintTable(worldObjTable)
-    --[[for i = 1, table.Count(worldObjTable) do
-        duplicator.Copy(worldObjTable[i])
-        
-    end]]
+    
     
     bigtable = duplicator.CopyEnts(worldObjTable)
-    --PrintTable(bigtable)
-    worldSaverThing(ply, bigtable) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.
-    --PrintTable(bigtable)
+    worldSaverThing(ply, bigtable, args[1]) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.
     
-    --print("SAVED")
-end
+    end)
 
-concommand.Add("fbg_worldsave", fbg_worldsave(ply))
-
--- Map load thing
-
-
-
-net.Receive("dupeTransfer", function(len, pl)
-    recievedDupeData = net.ReadTable()
-    --PrintTable(recievedDupeData)
-
-end)
-
-function fbg_worldload(ply, file)
-    -- DONT ADD THE FOLDER OR FILE EXTENSION
-    --print(file[1])
-    --print(ply)
-    worldLoadThing(ply, file[1])
+--[[ Map loading code.
+    UPDATE 15/7/2018 (EURODATE):
+    Re-wrote the world saving/loading code. TL:DR I originally loaded it from the client for some retarded reason.
     
+    INFORMATION:
+    So this set of code basically reads the specified world data out of a text file in familiarblockgame/content/data/.
+    I would have stored the files under content but I don't think the gamemode appreciates trying to load
+    custom folders there.
+    
+    To call this just run fbg_worldload(player,file) where ply is a random player and file is
+    the filename without the extension or folder bit.
+    
+    You may have noticed that there's a ply thing: I can't really get rid of that as it's
+    required for duplicator.paste's dumbass function. Sorry! Provided you aren't
+    doing any game-side ownership stuff though you should be ok to grab a random player.
+    
+    ]]
+
+
+function fbg_worldload(ply, fileName)
+    
+    -- worldLoadThing(ply, file[1])
+    
+    -- Assemble the file location.
+    local fileNameThing = "fbg_" .. fileName .. ".txt"
+    print(fileNameThing)
+    if file.Exists(fileNameThing, "DATA") != true then
+        print("No file found!")
+        return
+    end
+    
+    -- Open and read the compressed string.
+    local mapData_c = file.Read(fileNameThing)
+    
+    -- Decompress the string.
+    local mapData_d = util.Decompress(mapData_c)
+    
+    -- Convert to a table.
+    local mapData_d = util.JSONToTable(mapData_d)
+    
+    -- Setup our angles and position. In this case we're just doing the defaults WHICH YOU SHOULD PROBABLY KEEP.
     duplicator.SetLocalPos(Vector(0,0,0))
     duplicator.SetLocalAng(Angle(0,0,0))
     
     
+    -- Begin pasting the map. REQUIRES A PLAYER OF SOME SORT.
+    duplicator.Paste( ply, mapData_d.Entities, mapData_d.Constraints)
     
-    duplicator.Paste( ply, recievedDupeData.Entities, recievedDupeData.Constraints)
-    
-    print("DING")
+    print("DING! Paste is done.")
 end
+
+-- NOTE TO SELF: REMOVE THIS COMMAND LATER.
 concommand.Add("fbg_worldload", function(ply, cmd, args)
-    fbg_worldload(ply, args)
+    fbg_worldload(ply, args[1])
     end)
 

@@ -64,59 +64,30 @@ net.Receive("client_ScreenMessage", function()
     --print("Hello!")
 end)
 
-function magicDupeMachine(dupeTable)
-    local idunno = ""
-    local convertedTable = util.TableToJSON(dupeTable, false)
-    local compressed = util.Compress(convertedTable)
-    --print(dupeTable)
-    --print(convertedTable)
+function magicDupeMachine(dupeTable, fileName)
     
-    --PrintTable(dupeTable)
-    --print("PREPPIN BUTTHOLE")
+    -- Convert the table to a string (decompressed), Compress it...
+    local dupeTable_d = util.TableToJSON(dupeTable, false)
+    local dupeTable_c = util.Compress(dupeTable_d)
     
-    engine.WriteDupe(compressed,idunno)
+    -- Make ourselves a new file name to work with given the filename they want to write to.
+    local newFileName = "fbg_" .. fileName .. ".txt"
+    
+    -- Write this to a new file in the /data/ directory!
+    file.Write(newFileName, dupeTable_c)
+    print("DING! File done saving.")
 
 end
 
 net.Receive("client_SaveWorld", function()
     local ply = net.ReadEntity()
     local message = net.ReadTable()
+    local fileName = net.ReadString()
     if LocalPlayer() == ply then
-        --print("Yeet!")
-        magicDupeMachine(message)
+        magicDupeMachine(message, fileName)
     end
 end)
-
-function sendOurDupeDataBack(dupeDat)
-    net.Start("dupeTransfer")
-        net.WriteTable(dupeDat)
-    net.SendToServer()
-    
-end
-
-net.Receive("client_LoadWorld", function()
-    local ply = net.ReadEntity()
-    local file = net.ReadString()
-    --print(file)
-    
-    
-    
-    if LocalPlayer() == ply then
-        
-        --"dupes/782bb43420960a1fcf951803a19dc462.dupe"
-        --print("dupes/" .. file .. ".dupe")
-        local fileNameOpen = "dupes/" .. file .. ".dupe"
-        local dupeData = engine.OpenDupe(fileNameOpen)
-        --PrintTable(dupeData)
-        dupeData = util.Decompress(dupeData.data)
-        --print(dupeData)
-        dupeData = util.JSONToTable(dupeData)
-        --PrintTable(dupeData)
-        sendOurDupeDataBack(dupeData)
-        
-        
-    end
-end)
+ 
 
 function messageOv(ply, message)
     
