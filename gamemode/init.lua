@@ -49,7 +49,6 @@ concommand.Add("screenything", function( ply, cmd, args, argStr)
     print(argStr)
 end)
 
-
  
 function GM:PlayerDeathSound()
     return true
@@ -76,6 +75,12 @@ concommand.Add("join_buildmode", function( ply, cmd, args)
     end
     end)
     
+concommand.Add("fbg_join", function( ply, cmd, args)
+    ply:SetTeam(args[1])
+
+
+end)
+    
 concommand.Add("join_playmode", function( ply, cmd, args)
     ply:SetTeam(1)
     ply:UnSpectate()
@@ -94,10 +99,25 @@ end
 function GM:PlayerSpawn(ply)
     ply:SetupHands()
 
-    if ply:Team() == 1 then
-        print("Play mode player spawned!")
-        --ply:ConCommand("join_playmode")
+    if ply:Team() == 1 or ply:Team() > 2 then
+        --print("Play mode player spawned!")
         
+        local teamColor = team.GetColor(ply:Team())
+        local spawnPoints = spawnListAssembler(teamColor)
+        PrintTable(spawnPoints)
+        if spawnPoints != nil and table.Count(spawnPoints) != 0 then
+            local newSpawnBrick = table.Random(spawnPoints)
+            
+            if newSpawnBrick:IsValid() == true then
+                local newSpawnPos = Vector(0,0,40) + newSpawnBrick:GetPos()
+                ply:SetPos(newSpawnPos)
+                
+            else
+                print("Some weird shit happened! We found a spawn point but it wasn't valid?")
+            end
+        else
+            print("Couldn't find spawnpoint!")
+        end
     end
     
     if ply:Team() == 2 then
@@ -168,6 +188,46 @@ function rightAngleFind(ang)
     
     return finalAngle
 end
+
+-- Miscellanous functions
+--- Related variables:
+
+--[[ spawnListAssembler function:
+    Feed it the color of your team (note: this means no identical team colors allowed)
+    and get a table of all their spawn point entities in return.
+    
+    I recommend using white for neutral non-team players.
+
+]]
+function spawnListAssembler(teamColor)
+    local spawnPointList = ents.FindByClass("fbg_spawnpoint_dest")
+    table.Add(spawnPointList, ents.FindByClass("fbg_spawnpoint"))
+    if table.Count(spawnPointList) == 0 then print("Error! No spawnpoints for your team!") return end
+    local spawnPointTeamList = {}
+    local convertedTeamColor = Color(teamColor.r,teamColor.g,teamColor.b,255)
+    
+    
+    for i = 1, table.Count(spawnPointList), 1 do
+        
+        if spawnPointList[i]:GetColor().r == teamColor.r then
+        if spawnPointList[i]:GetColor().g == teamColor.g then
+        if spawnPointList[i]:GetColor().b == teamColor.b then
+            table.insert(spawnPointTeamList, i, spawnPointList[i])
+            
+        end
+        end
+        end
+    end
+    
+    if table.Count(spawnPointTeamList) == 0 then
+        print("Error! No spawnpoints for your team!")
+        local emptyTable = {}
+        return emptyTable
+    end
+    
+    return spawnPointTeamList
+end
+
 
 -- BRICK RELATED CODE BEGINS HERE
 
@@ -482,12 +542,13 @@ concommand.Add("fbg_brickresize", function(ply, cmd, args)
 local bigtable = {} 
 
 duplicator.Allow("roblox_brick_*")
+duplicator.Allow("fbg_*")
 
 function worldSaverThing(ply, worldTable, fileName)
     if IsValid(ply) then
         net.Start("client_SaveWorld")
         net.WriteEntity(ply)
-        net.WriteTable(worldTable)
+        net.WriteString(worldTable)
         net.WriteString(fileName)
         net.Send(ply)
         
@@ -506,19 +567,52 @@ end
     
     Feed the command a filename (without folders or extensions). Will be saved to /data/ as fbg_(name).txt.
     MUST BE TRANSFERRED LATER MANUALLY TO THE SERVER'S familiarblockgame/content/data/mapdata/ folder.
-
+    
+    UPDATE 16/7/2018 (EURODATE):
+    Apparently I can't network compressed strings and I can't network the uncompressed string so FUCK IT.
+    Just gonna try writing this client side.
+    
+    WARNING WARNING WARNING WARNING:
+    DO NOT EVER TRY TO FUCKING RUN THIS OUTSIDE SINGLEPLAYER. LORD ONLY KNOWS WHATS GONNA HAPPEN.
 
 ]]
 
+function magicDupeMachine2(dupeTable_c, fileName)
+    
+    
+    -- Make ourselves a new file name to work with given the filename they want to write to.
+    local newFileName = "fbg_" .. fileName .. ".txt"
+    
+    -- Write this to a new file in the /data/ directory!
+    file.Write(newFileName, dupeTable_c)
+    if file.Exists(newFileName, "DATA") != true then
+        
+        print("OOF! Somethings wrong! Saved file not found!")
+    else 
+        print("DING! File done saving.")
+        --print("File contents:")
+        --print(file.Read(newFileName, "DATA"))
+    end
+end
+
 concommand.Add("fbg_worldsave", function(ply, cmd, args)
-    bigtable = {}
+    bigTable = {}
     local worldObjTable = ents.FindByClass("roblox_brick_*")
-    local worldObjDat = {}
+    local spawnPointTable = ents.FindByClass("fbg_spawnpoint_*")
+    table.Add(worldObjTable, spawnPointTable)
+    --local worldObjDat = {}--PrintTable(worldObjTable)
     
+    bigTable = duplicator.CopyEnts(worldObjTable)
     
-    bigtable = duplicator.CopyEnts(worldObjTable)
-    worldSaverThing(ply, bigtable, args[1]) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.
+    local dupeTable_d = util.TableToJSON(bigTable, true)
+    --print(dupeTable_d)
+    local dupeTable_c = util.Compress(dupeTable_d)
     
+    --print("Ugly thing: ")
+    --print(dupeTable_c)
+    
+    magicDupeMachine2(dupeTable_c, args[1])
+    --worldSaverThing(ply, dupeTable_c, args[1]) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.-- Lol in this example I broke that warning ---^end)
     end)
 
 --[[ Map loading code.

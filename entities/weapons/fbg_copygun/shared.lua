@@ -46,6 +46,7 @@ function SWEP:Think()
         aimpos3 = lookdat2.HitPos
         if lookdat2.Entity:IsValid() then
             aiment3 = lookdat2.Entity
+            
         end
         
         
@@ -87,7 +88,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    
+    if SERVER then
     local seenthing = aiment3:GetClass()
     
     
@@ -112,6 +113,7 @@ function SWEP:SecondaryAttack()
         Active = 0
     else
         Active = Active + 1
+    end
     end
 end
 

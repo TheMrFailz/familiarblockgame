@@ -64,24 +64,27 @@ net.Receive("client_ScreenMessage", function()
     --print("Hello!")
 end)
 
-function magicDupeMachine(dupeTable, fileName)
+function magicDupeMachine(dupeTable_c, fileName)
     
-    -- Convert the table to a string (decompressed), Compress it...
-    local dupeTable_d = util.TableToJSON(dupeTable, false)
-    local dupeTable_c = util.Compress(dupeTable_d)
     
     -- Make ourselves a new file name to work with given the filename they want to write to.
     local newFileName = "fbg_" .. fileName .. ".txt"
     
     -- Write this to a new file in the /data/ directory!
     file.Write(newFileName, dupeTable_c)
-    print("DING! File done saving.")
-
+    if file.Exists(newFileName, "DATA") != true then
+        
+        print("OOF! Somethings wrong! Saved file not found!")
+    else 
+        print("DING! File done saving.")
+        print("File contents:")
+        print(file.Read(newFileName, "DATA"))
+    end
 end
 
 net.Receive("client_SaveWorld", function()
     local ply = net.ReadEntity()
-    local message = net.ReadTable()
+    local message = net.ReadString()
     local fileName = net.ReadString()
     if LocalPlayer() == ply then
         magicDupeMachine(message, fileName)

@@ -30,6 +30,7 @@ end
 
 
 local function SelfExplode(self) 
+    
     local explosion = ents.Create( "env_explosion" )
     explosion:SetPos(self:GetPos())
     explosion:SetOwner(self)
@@ -39,14 +40,14 @@ local function SelfExplode(self)
     explosion:Fire( "Explode", 0, 0)
     
     explosion:EmitSound("weapon_effects/rocket_explode.wav", 400, 100)
-
+    
 
 end 
 
 function ENT:PhysicsCollide( touchdata, toucherobj )
-    
+    timer.Simple(0, function()
     SelfExplode(self)
     self:Remove()
-    
+    end)
 end
 

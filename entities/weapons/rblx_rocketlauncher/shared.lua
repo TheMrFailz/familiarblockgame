@@ -60,7 +60,7 @@ function SWEP:PrimaryAttack()
     physics:SetVelocity(self.Owner:GetAimVector()*1000)
     
     --print(self.Owner:EyeAngles())
-    print(self.Owner:GetViewEntity():GetPos())
+    --print(self.Owner:GetViewEntity():GetPos())
     
     local FaceAngles = self.Owner:EyeAngles()
     

@@ -6,7 +6,7 @@ include('shared.lua')
 local Length = 4
 local Width = 2
 local Height = 1
-local MaxHealth = 300
+local MaxHealth = 500
 
 function ENT:Initialize()
     
