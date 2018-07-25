@@ -22,6 +22,9 @@ include( "textureincludes.lua")
     was used in the production of this
     gamemode.
     
+    PS: You probably shouldn't mod this file too much.
+    Modify the gamescript.lua instead! (It's basically the init file)
+    
     Produced originally by TheMrFailz
     for the 2018 Summer gamemode competition.
     ]]
@@ -93,9 +96,11 @@ concommand.Add("join_playmode", function( ply, cmd, args)
     
 function GM:PlayerInitialSpawn(ply)
     ply:ConCommand("join_playmode")
-    ply:ConCommand("dsp_off 1")
-
+    --ply:ConCommand("dsp_off 1")
+    ply:SetTeam(math.Round(math.random(3,4)))
 end
+
+
     
 function GM:PlayerSpawn(ply)
     ply:SetupHands()

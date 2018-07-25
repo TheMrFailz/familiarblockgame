@@ -21,6 +21,27 @@ function GM:Initialize()
 
 end
 
+local teamWeps = {
+    "rblx_rocketlauncher"
+
+}
+
+local function teamWeaponGiver(ply)
+    
+        if ply:Team() == 3 or ply:Team() == 4 then
+            for y = 1, table.Count(teamWeps) do
+                ply:Give(teamWeps[y])
+            end
+        end
+    
+
+
+
+end
+hook.Add("PlayerSpawn", "teamWeaponGiverHook", teamWeaponGiver)
+
+
+
 function checkSpawns(quitBool)
     if quitBool == true then return end
     local oofTeam = spawnListAssembler(Color(0, 165, 255, 255))
