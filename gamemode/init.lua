@@ -38,17 +38,18 @@ function messageOverlay(ply, message)
         net.Start("client_ScreenMessage")
         net.WriteEntity(ply)
         net.WriteString(message)
-        --net.WriteInt(delay)
+        
         net.Send(ply)
-        --print("run2")
+        
     end
 
 end
+--[[
 concommand.Add("screenything", function( ply, cmd, args, argStr)
     messageOverlay(ply, argStr)
     print(argStr)
 end)
-
+]]
  
 function GM:PlayerDeathSound()
     return true
@@ -101,10 +102,10 @@ function GM:PlayerSpawn(ply)
 
     if ply:Team() == 1 or ply:Team() > 2 then
         --print("Play mode player spawned!")
-        
+        ply:SetJumpPower(250)
         local teamColor = team.GetColor(ply:Team())
         local spawnPoints = spawnListAssembler(teamColor)
-        PrintTable(spawnPoints)
+        --PrintTable(spawnPoints)
         if spawnPoints != nil and table.Count(spawnPoints) != 0 then
             local newSpawnBrick = table.Random(spawnPoints)
             
@@ -118,6 +119,11 @@ function GM:PlayerSpawn(ply)
         else
             print("Couldn't find spawnpoint!")
         end
+        
+        -- Set his team skin?
+        local skinnameassembler = "models/misc/team_" .. team.GetName(ply:Team()) .. ".vtf"
+        ply:SetMaterial(skinnameassembler)
+        
     end
     
     if ply:Team() == 2 then
@@ -129,6 +135,7 @@ function GM:PlayerSpawn(ply)
         ply:Give("fbg_movegun")
         ply:Give("fbg_resizegun")
         ply:Give("fbg_copygun")
+
         
         umsg.Start("openBuildControls", ply)
         umsg.End() 
@@ -147,9 +154,12 @@ function GM:PlayerButtonDown(ply, button)
         if ply:Team() == 2 then
             local weaponsTable = ply:GetWeapons()
             ply:UnSpectate()
+            if button <= table.Count(weaponsTable) + 1 then
             ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
+            end
             --print(weaponsTable[button - 1]:GetClass())
             ply:Spectate( OBS_MODE_ROAMING )
+            
         end
         
     end
@@ -227,6 +237,38 @@ function spawnListAssembler(teamColor)
     
     return spawnPointTeamList
 end
+
+--[[ cleanup function:
+    as the name suggests this is meant to clean up all the blocks
+    EXCEPT for a supplied table of entities that you want to save.
+    Pass it nothing to delete *everything*
+    ]]
+    
+function cleanupBricks(ignore)
+    local thingstokill = ents.FindByClass("roblox_brick*")
+    table.Add(thingstokill, ents.FindByClass("fbg_*"))
+    
+    if ignore != nil and table.Count(ignore) != 0 then
+    for i = 1, table.Count(thingstokill) do
+        for y = 1, table.Count(ignore) do
+            if ignore[y]:GetClass() == thingstokill[i]:GetClass() then
+                table.remove(thingstokill, i)
+            end
+        end
+    
+    end
+    end
+    
+    
+    if thingstokill != nil and table.Count(thingstokill) != 0 then
+    for i = 1, table.Count(thingstokill) do
+        thingstokill[i]:Remove()
+    end
+    end 
+    
+end
+
+
 
 
 -- BRICK RELATED CODE BEGINS HERE
@@ -544,6 +586,8 @@ local bigtable = {}
 duplicator.Allow("roblox_brick_*")
 duplicator.Allow("fbg_*")
 
+duplicator.Allow("fbg_killbrick")
+
 function worldSaverThing(ply, worldTable, fileName)
     if IsValid(ply) then
         net.Start("client_SaveWorld")
@@ -599,7 +643,9 @@ concommand.Add("fbg_worldsave", function(ply, cmd, args)
     bigTable = {}
     local worldObjTable = ents.FindByClass("roblox_brick_*")
     local spawnPointTable = ents.FindByClass("fbg_spawnpoint_*")
+    local fbgTable = ents.FindByClass("fbg_*")
     table.Add(worldObjTable, spawnPointTable)
+    table.Add(worldObjTable, fbgTable)
     --local worldObjDat = {}--PrintTable(worldObjTable)
     
     bigTable = duplicator.CopyEnts(worldObjTable)
@@ -637,6 +683,8 @@ concommand.Add("fbg_worldsave", function(ply, cmd, args)
 function fbg_worldload(ply, fileName)
     
     -- worldLoadThing(ply, file[1])
+    
+    cleanupBricks({})
     
     -- Assemble the file location.
     local fileNameThing = "fbg_" .. fileName .. ".txt"

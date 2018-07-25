@@ -74,10 +74,9 @@ end
 
 function ENT:Touch( toucher )
     if toucher:IsValid() then
-        print("Oolala")
+        --print("Oolala")
         if toucher:IsPlayer() then
             toucher:Kill()
-            print("SYKE!")
         end
         
     end

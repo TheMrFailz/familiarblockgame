@@ -46,7 +46,7 @@ function ENT:PhysicsCollide( touchdata, toucherobj )
 end
 
 function ENT:OnTakeDamage(dmg)
-    if(self.Entity.OurHealth < (MaxHealth * 0.5)) then
+    if(self.Entity.OurHealth < (MaxHealth * 0.3)) then
         Constraintable = false
         
         if(self.Entity:GetPhysicsObject():IsMoveable() == false) then
