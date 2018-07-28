@@ -1,4 +1,4 @@
-SWEP.PrintName			= "Paintball Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
+SWEP.PrintName			= "Bomb" -- This will be shown in the spawn menu, and in the weapon selection menu
 SWEP.Author			= "TheMrFailz" -- These two options will be shown when you have the weapon highlighted in the weapon selection menu
 
 SWEP.Spawnable = true
@@ -9,7 +9,7 @@ SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 1
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo		= "none"
-SWEP.Primary.Delay          = 3
+SWEP.Primary.Delay          = 8
 SWEP.Primary.Sound          = ""
 
 SWEP.Secondary.ClipSize		= -1
@@ -43,28 +43,14 @@ function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
     if SERVER then
-    local rocket = ents.Create( "roblox_rocket" )
+    local rocket = ents.Create( "roblox_bomb" )
     if(!IsValid(rocket)) then return end
-    local spawnpos = self.Owner:LocalToWorld( Vector(70,0,60))
+    local spawnpos = self.Owner:LocalToWorld( Vector(10,0,40))
     rocket:SetPos(spawnpos)
     
     rocket:Spawn() 
     
-    local physics = rocket:GetPhysicsObject()
-    physics:Wake()
-    physics:EnableMotion( true )
-    physics:EnableGravity( false )
-    physics:EnableDrag( false )
-    physics:SetVelocity(self.Owner:GetAimVector()*1000)
-    
-    --print(self.Owner:EyeAngles())
-    print(self.Owner:GetViewEntity():GetPos())
-    
-    local FaceAngles = self.Owner:EyeAngles()
-    
-    rocket:SetAngles(Angle(0,FaceAngles.yaw + 90,FaceAngles.pitch))
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-    --rocket:SetAngles(self.Owner:GetAimVector():Angle())
     end
 end
 

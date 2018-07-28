@@ -29,43 +29,44 @@ include( "textureincludes.lua")
     for the 2018 Summer gamemode competition.
     ]]
 
-isAllowed_Build = true
+-- Can players go into build mode?
+isAllowed_Build = false
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
 util.AddNetworkString( "dupeTransfer" )
 
-
+--[[ Message overlay function.
+    Call this with a player and then a string message as an argument
+    to make an overlay on the player in question's screenw it a message.
+    ]]
+    
 function messageOverlay(ply, message)
+    
     if IsValid(ply) then
         net.Start("client_ScreenMessage")
         net.WriteEntity(ply)
         net.WriteString(message)
         
         net.Send(ply)
-        
+    else
+        print("Player not found.")
+    
     end
 
 end
---[[
-concommand.Add("screenything", function( ply, cmd, args, argStr)
-    messageOverlay(ply, argStr)
-    print(argStr)
-end)
-]]
  
+-- Disable the default player death sound for maximum oof.
 function GM:PlayerDeathSound()
     return true
 end
 
+-- Custom death sound function.
 function GM:PlayerDeath( ply, wep, attacker )
-    
     ply:EmitSound("player/custom/oof.wav", 100, 100, 1)
-    --print(ply:GetPos())
-   
-
 end
 
+-- Buildmode command. Only works if build mode is enabled. 
 concommand.Add("join_buildmode", function( ply, cmd, args)
     if isAllowed_Build == true then
         ply:SetTeam(2)
@@ -79,58 +80,68 @@ concommand.Add("join_buildmode", function( ply, cmd, args)
     end
     end)
     
+-- Remove this? Lets you join a particular team.
 concommand.Add("fbg_join", function( ply, cmd, args)
     ply:SetTeam(args[1])
-
-
 end)
     
+-- Remove this? Lets you join regular default play mode.
 concommand.Add("join_playmode", function( ply, cmd, args)
     ply:SetTeam(1)
     ply:UnSpectate()
-    ply:SetModel("models/player/failzstuff/roblox_guy/roblox_guy.mdl")
-    --print("Entered play mode...")
     ply:Kill()
-    end)
+end)
     
-    
+-- Spawn function. Give them a random team. 
 function GM:PlayerInitialSpawn(ply)
     ply:ConCommand("join_playmode")
-    --ply:ConCommand("dsp_off 1")
     ply:SetTeam(math.Round(math.random(3,4)))
 end
 
 
     
 function GM:PlayerSpawn(ply)
-    ply:SetupHands()
+    ply:SetupHands() -- setup our hands. 
 
     if ply:Team() == 1 or ply:Team() > 2 then
-        --print("Play mode player spawned!")
+        
+        -- tall jumps oof.
         ply:SetJumpPower(250)
+        
+        -- Get their team color and figure out where they're allowed to spawn.
         local teamColor = team.GetColor(ply:Team())
         local spawnPoints = spawnListAssembler(teamColor)
-        --PrintTable(spawnPoints)
+        
+        -- Give them the correct playermodel.
+        ply:SetModel("models/player/failzstuff/roblox_guy/roblox_guy.mdl")
+        
+        -- Provided we actually have some spawnpoints...
         if spawnPoints != nil and table.Count(spawnPoints) != 0 then
+            
+            -- Pick a random spawn point out of the spawn point list.
             local newSpawnBrick = table.Random(spawnPoints)
             
+            -- Provided it exists...
             if newSpawnBrick:IsValid() == true then
+                -- Set our position accordingly.
                 local newSpawnPos = Vector(0,0,40) + newSpawnBrick:GetPos()
                 ply:SetPos(newSpawnPos)
                 
             else
-                print("Some weird shit happened! We found a spawn point but it wasn't valid?")
+                print("Something weird happened! We found a spawn point but it wasn't valid?")
             end
         else
             print("Couldn't find spawnpoint!")
         end
         
-        -- Set his team skin?
+        -- Set his team skin.
         local skinnameassembler = "models/misc/team_" .. team.GetName(ply:Team()) .. ".vtf"
         ply:SetMaterial(skinnameassembler)
         
     end
     
+    
+    -- Setup for build mode.
     if ply:Team() == 2 then
         print("Build mode player spawned!")
         ply:Spectate( OBS_MODE_ROAMING )
@@ -150,19 +161,33 @@ function GM:PlayerSpawn(ply)
 
 end
 
+-- Delicious footsteps.
+local footstepTable = {
+    "player/footsteps/step1.wav",
+    "player/footsteps/step2.wav",
+    "player/footsteps/step3.wav",
+    "player/footsteps/step4.wav"
+    }
 
+function GM:PlayerFootstep( ply, pos, foot, sound, volume, rf )
+    -- Override our default footsteps with the new ones.
+	ply:EmitSound( table.Random(footstepTable) )
+end
 
 
 function GM:PlayerButtonDown(ply, button)
-    -- THIS IS TO FIX THE DUMB SPECTATOR NO SWEPS MEME
+    -- Fixes the bug where build mode can't use their tools or switch them.
     if (button >= 2) && (button <= 10) then
+    
         if ply:Team() == 2 then
+    
             local weaponsTable = ply:GetWeapons()
             ply:UnSpectate()
+            
             if button <= table.Count(weaponsTable) + 1 then
-            ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
+                ply:SelectWeapon(weaponsTable[button - 1]:GetClass())
             end
-            --print(weaponsTable[button - 1]:GetClass())
+            
             ply:Spectate( OBS_MODE_ROAMING )
             
         end
@@ -184,10 +209,17 @@ function GM:PlayerSetHandsModel( ply, ent )
 
 end
 
+
+
+-- Miscellanous functions
+--- Related variables:
+
+--[[ rightAngleFind function:
+    Input an angle and it'll return the closest 90 degree angle (NESW)
+    ]]
+
 function rightAngleFind(ang)
-    print("Input ang: ")
-    print(ang)
-    --ang = ang + 180
+    
     
     if ang <= 45 && ang >= -45 then
         finalAngle = 0
@@ -204,8 +236,6 @@ function rightAngleFind(ang)
     return finalAngle
 end
 
--- Miscellanous functions
---- Related variables:
 
 --[[ spawnListAssembler function:
     Feed it the color of your team (note: this means no identical team colors allowed)
@@ -217,7 +247,7 @@ end
 function spawnListAssembler(teamColor)
     local spawnPointList = ents.FindByClass("fbg_spawnpoint_dest")
     table.Add(spawnPointList, ents.FindByClass("fbg_spawnpoint"))
-    if table.Count(spawnPointList) == 0 then print("Error! No spawnpoints for your team!") return end
+    if table.Count(spawnPointList) == 0 then  return end
     local spawnPointTeamList = {}
     local convertedTeamColor = Color(teamColor.r,teamColor.g,teamColor.b,255)
     
@@ -235,7 +265,7 @@ function spawnListAssembler(teamColor)
     end
     
     if table.Count(spawnPointTeamList) == 0 then
-        print("Error! No spawnpoints for your team!")
+        --print("Error! No spawnpoints for your team!")
         local emptyTable = {}
         return emptyTable
     end
@@ -273,9 +303,6 @@ function cleanupBricks(ignore)
     
 end
 
-
-
-
 -- BRICK RELATED CODE BEGINS HERE
 
 function brickposgenerator( pos)
@@ -297,7 +324,6 @@ function brickposgenerator( pos)
     local x = math.Round(pos.x/studsize)*studsize
     local y = math.Round(pos.y/studsize)*studsize
     local z = math.Round(pos.z/studsize)*studsize
-    --local z = pos.z + 5.5
     outpos = Vector(x,y,z)
 
     return outpos
@@ -362,12 +388,6 @@ function brickgenerator( Length, Width, Height )
 
 end
 
-function brickMatrixGenerator(entity, length, width, height)
-    local blockS
-    
-    
-    
-end
 
 function blockinit(ply, lookpos)
     --[[ This function can (and should) be used to:
@@ -375,7 +395,6 @@ function blockinit(ply, lookpos)
         
     ]]
     
-    --print("Success!")
     local newprop = ents.Create("roblox_brick_base")
     if (!IsValid( newprop )) then return end
     
@@ -389,7 +408,6 @@ function blockinit(ply, lookpos)
 	end
     
     newprop:GetPhysicsObject():EnableMotion(false)
-    --newprop:SetOwner(ply)
     
 
 end
@@ -429,8 +447,8 @@ function blockresize(lookent, length, width, height)
     local originalPos = lookent:GetModelBounds(mins)
     local newPos = Vector(0,0,0)
     local newModel = brickgenerator(length, width, height)
+
     
-    --print(newModel)
     if util.IsValidModel(newModel) == true then
     
         lookent:SetModel(newModel)
@@ -471,7 +489,6 @@ function blockscroll(ent, dir, side)
 end
 
 function modeltoints(modelname, desireddimension)
-    --local modelName = string.StripExtension(string.Replace(modelname, "models/hunter/blocks/cube", ""))
     local splodetable
     
     if !istable(modelname) && string.find(modelname, "models/hunter/blocks/cube")  != nil then
@@ -483,7 +500,6 @@ function modeltoints(modelname, desireddimension)
     end
     
     
-    --PrintTable(splodetable)
     local x, y, z
     
     x = tonumber(splodetable[1])
@@ -504,18 +520,10 @@ function modeltoints(modelname, desireddimension)
         
     end
     
-    --local brickheight = tonumber(string.StripExtension(splodetable[3]))
-    
-    
-    
 end
 
 function brickgroundheight(ent)
     local dist = 0
-    --local splodetable = string.Explode("x", ent:GetModel(), false)
-    --local brickheight = tonumber(string.StripExtension(splodetable[3]))
-    
-    
     local brickheight = modeltoints(ent:GetModel(), 3)
     
     if brickheight == 25 then
@@ -529,8 +537,6 @@ function brickgroundheight(ent)
         dist = (brickheight * 17)
     
     end
-    --print("dist = " .. dist)
-    --modeltoints(ent:GetModel(), 1)
     
     return dist
 end
@@ -622,25 +628,19 @@ end
     Just gonna try writing this client side.
     
     WARNING WARNING WARNING WARNING:
-    DO NOT EVER TRY TO FUCKING RUN THIS OUTSIDE SINGLEPLAYER. LORD ONLY KNOWS WHATS GONNA HAPPEN.
+    DO NOT EVER TRY TO RUN THIS OUTSIDE SINGLEPLAYER. BAD THINGS ARE GONNA HAPPEN.
 
 ]]
 
 function magicDupeMachine2(dupeTable_c, fileName)
     
-    
-    -- Make ourselves a new file name to work with given the filename they want to write to.
     local newFileName = "fbg_" .. fileName .. ".txt"
-    
-    -- Write this to a new file in the /data/ directory!
     file.Write(newFileName, dupeTable_c)
     if file.Exists(newFileName, "DATA") != true then
         
         print("OOF! Somethings wrong! Saved file not found!")
     else 
         print("DING! File done saving.")
-        --print("File contents:")
-        --print(file.Read(newFileName, "DATA"))
     end
 end
 
@@ -651,19 +651,14 @@ concommand.Add("fbg_worldsave", function(ply, cmd, args)
     local fbgTable = ents.FindByClass("fbg_*")
     table.Add(worldObjTable, spawnPointTable)
     table.Add(worldObjTable, fbgTable)
-    --local worldObjDat = {}--PrintTable(worldObjTable)
     
     bigTable = duplicator.CopyEnts(worldObjTable)
     
     local dupeTable_d = util.TableToJSON(bigTable, true)
-    --print(dupeTable_d)
+    
     local dupeTable_c = util.Compress(dupeTable_d)
     
-    --print("Ugly thing: ")
-    --print(dupeTable_c)
-    
     magicDupeMachine2(dupeTable_c, args[1])
-    --worldSaverThing(ply, dupeTable_c, args[1]) -- DONT RUN THIS IN MP YOUR GONNA BREAK SOME SHIT.-- Lol in this example I broke that warning ---^end)
     end)
 
 --[[ Map loading code.
@@ -686,8 +681,6 @@ concommand.Add("fbg_worldsave", function(ply, cmd, args)
 
 
 function fbg_worldload(ply, fileName)
-    
-    -- worldLoadThing(ply, file[1])
     
     cleanupBricks({})
     

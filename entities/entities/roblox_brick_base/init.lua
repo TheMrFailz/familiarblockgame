@@ -6,7 +6,7 @@ include('shared.lua')
 local Length = 4
 local Width = 1
 local Height = 1
-local MaxHealth = 600
+local MaxHealth = 500
 local Constraintable = true
 ENT.OurHealth = MaxHealth
 
@@ -16,7 +16,7 @@ function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetMoveType( MOVETYPE_VPHYSICS )   -- after all, gmod is a physics
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
-    
+    self.Entity:SetCollisionGroup(COLLISION_GROUP_NONE)
     
  
     local phys = self:GetPhysicsObject()
@@ -78,8 +78,10 @@ function ENT:OnTakeDamage(dmg)
         end
     end
     
-    if(self.Entity.OurHealth < (MaxHealth * 0.30)) then
+    if(self.Entity.OurHealth < (MaxHealth * 0.40)) then
         constraint.RemoveAll(self.Entity)
+        self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+        
     end
     
     

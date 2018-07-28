@@ -43,8 +43,6 @@ function ClientZoom()
 
 end
 
---hook.Add('OnContextMenuOpen', 'NoContext4u', function()return false end)
-
 local messageOverlay = {}
 messageOverlay.text = ""
 messageOverlay.time = 0
@@ -55,13 +53,10 @@ usermessage.Hook("openBuildControls", enableBuildControls)
 net.Receive("client_ScreenMessage", function()
     local ply = net.ReadEntity()
     local message = net.ReadString()
-    --local delay = net.ReadInt()
     
     messageOverlay.text = message
     messageOverlay.target = ply
     messageOverlay.time = CurTime() + 5
-    --messageOv(ply, message, CurTime() + 3)
-    --print("Hello!")
 end)
 
 function magicDupeMachine(dupeTable_c, fileName)

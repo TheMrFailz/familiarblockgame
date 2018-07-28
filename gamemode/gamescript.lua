@@ -12,7 +12,6 @@ function GM:Initialize()
         messageOverlay(quickPlayerList[i], "Beginning round in 35 seconds...")
     end
     
-    --rountTime = curTime() + 60
     timer.Simple( 35, function()
         roundStart()
     
@@ -22,8 +21,8 @@ function GM:Initialize()
 end
 
 local teamWeps = {
-    "rblx_rocketlauncher"
-
+    "rblx_rocketlauncher",
+    "rblx_bomb"
 }
 
 local function teamWeaponGiver(ply)
@@ -48,7 +47,8 @@ function checkSpawns(quitBool)
     local bloxxTeam = spawnListAssembler(Color(255, 136, 0, 255))
     local gameover = false
     
-    if table.Count(oofTeam) == 0 then
+    if table.GetFirstValue(oofTeam) == nil then
+    print("bloxx")
         local quickPlayerList = player.GetHumans()
         for i = 1, player.GetCount() do
             messageOverlay(quickPlayerList[i], "Game over! The Bloxxers win!")
@@ -58,7 +58,8 @@ function checkSpawns(quitBool)
             roundEnd()
         end)
     end
-    if table.Count(bloxxTeam) == 0 then
+    if table.GetFirstValue(bloxxTeam) == nil then
+        print("oof")
         local quickPlayerList = player.GetHumans()
         for i = 1, player.GetCount() do
             messageOverlay(quickPlayerList[i], "Game over! The Oofers win!")
@@ -77,7 +78,7 @@ end
 
 function roundStart()
 
-    local quickPlayerList = player.GetHumans()
+    local quickPlayerList = player.GetAll()
     
     if table.Count(quickPlayerList) > 0 then
         fbg_worldload(quickPlayerList[1], "battletowerz_final_TEST")
@@ -91,10 +92,11 @@ function roundStart()
     
     local teamPicker = 3
     for i = 1, player.GetCount() do
+        
         quickPlayerList[i]:SetTeam(teamPicker)
         messageOverlay(quickPlayerList[i], "Round start! Destroy the enemy spawns!")
-        timer.Simple(7, function()
-            messageOverlay(quickPlayerList[i], "!This is a demo gamemode, so it's gonna be shit!")
+        timer.Simple(5, function()
+            messageOverlay(quickPlayerList[i], "Note: FBG is a framework, not just a regular gamemode. This is a demo subgame.")
         end)
         teamPicker = teamPicker + 1
         if teamPicker > 4 then teamPicker = 3 end
@@ -112,7 +114,7 @@ end)
 function roundEnd()
     local quickPlayerList = player.GetHumans()
     for i = 1, player.GetCount() do
-        messageOverlay(quickPlayerList[i], "Restarting (regenerating world...)")
+        --messageOverlay(quickPlayerList[i], "Restarting (regenerating world...)")
     end
     timer.Simple(7, function()
        roundStart()
