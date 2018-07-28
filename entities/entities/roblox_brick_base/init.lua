@@ -50,6 +50,7 @@ end
 
 
 
+
 local function SelfExplode(self) 
     local explosion = ents.Create( "env_explosion" )
     explosion:SetPos(self:GetPos())
@@ -80,10 +81,13 @@ function ENT:OnTakeDamage(dmg)
     
     if(self.Entity.OurHealth < (MaxHealth * 0.40)) then
         constraint.RemoveAll(self.Entity)
+        
+    end
+    if(self.Entity.OurHealth < (MaxHealth * 0.20)) then
+        constraint.RemoveAll(self.Entity)
         self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
         
     end
-    
     
     self.Entity:TakePhysicsDamage(dmg)
     if(self.Entity.OurHealth <= 0) then return end

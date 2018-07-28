@@ -98,11 +98,25 @@ function GM:PlayerInitialSpawn(ply)
     ply:SetTeam(math.Round(math.random(3,4)))
 end
 
+function GM:ShouldCollide( ent1, ent2 )
+    
+	-- If players are about to collide with each other, then they won't collide.
+	if ( IsValid( ent1 ) and IsValid( ent2 ) and ent1:IsPlayer() and ent2:IsPlayer() ) then 
 
+        if ent1:Team() == ent2:Team() then
+
+            return false 
+        end
+    
+    end
+
+	return true
+
+end
     
 function GM:PlayerSpawn(ply)
     ply:SetupHands() -- setup our hands. 
-
+    ply:SetCustomCollisionCheck( true )
     if ply:Team() == 1 or ply:Team() > 2 then
         
         -- tall jumps oof.
