@@ -23,7 +23,7 @@ function ENT:Initialize()
 	if (phys:IsValid()) then
 		phys:Wake()
 	end
-    
+    phys:Sleep()
     
     --self:EmitSound("weapon_effects/rocket_fire.wav")
 end
@@ -40,36 +40,6 @@ function Connector(self)
     end
 end
  
-function ENT:Use( activator, caller )
-    return
-end
- 
-function ENT:Think()
-    
-end
-
-
-
-
-local function SelfExplode(self) 
-    local explosion = ents.Create( "env_explosion" )
-    explosion:SetPos(self:GetPos())
-    explosion:SetOwner(self)
-    explosion:SetKeyValue("spawnflags", 64)
-    explosion:Spawn()
-    explosion:SetKeyValue("iMagnitude", "100")
-    explosion:Fire( "Explode", 0, 0)
-    
-    explosion:EmitSound("weapon_effects/rocket_explode.wav", 400, 100)
-
-
-end 
-
-function ENT:PhysicsCollide( touchdata, toucherobj )
-    
-    
-    
-end
 
 function ENT:OnTakeDamage(dmg)
     if(self.Entity.OurHealth < (MaxHealth * 0.6)) then

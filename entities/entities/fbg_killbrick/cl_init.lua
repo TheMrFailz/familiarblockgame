@@ -14,12 +14,12 @@ function ENT:Draw()
     --local stretchtext = Material("", "translucent")
     --local stretchtext2 = stretchtext:GetName()
     
-    self:SetMaterial("bricks/fbg_lava")
+    --self:SetMaterial("bricks/fbg_lava")
     
     
     
     --self:SetColor(Color(48,127,255,255))
-    self:DrawModel()       -- Draw the model.
+    --self:DrawModel()       -- Draw the model.
  
     --AddWorldTip( self:EntIndex(), "BATHTUB TIME!", 0.5, self:GetPos(), self  ) -- Add an example tip.
 end

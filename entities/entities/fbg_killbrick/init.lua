@@ -10,9 +10,8 @@ local MaxHealth = 300
 local Constraintable = true
 ENT.OurHealth = MaxHealth
 
-function Connector() end
- 
 function ENT:Initialize()
+    
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetMoveType( MOVETYPE_VPHYSICS )   -- after all, gmod is a physics
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
@@ -26,8 +25,9 @@ function ENT:Initialize()
     
     self:SetRenderMode( RENDERMODE_TRANSALPHA )
     self:SetColor(Color(255,255,0,10))
-    
+    self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
     --self:EmitSound("weapon_effects/rocket_fire.wav")
+    phys:Sleep()
 end
 
 function Connector(self)
@@ -41,16 +41,10 @@ function Connector(self)
         end
     end
 end
- 
-function ENT:Use( activator, caller )
-    return
-end
- 
+
 function ENT:Think()
-    
+return true
 end
-
-
 
 local function SelfExplode(self) 
     local explosion = ents.Create( "env_explosion" )
@@ -65,12 +59,6 @@ local function SelfExplode(self)
 
 
 end 
-
-function ENT:PhysicsCollide( touchdata, toucherobj )
-    
-    
-    
-end
 
 function ENT:Touch( toucher )
     if toucher:IsValid() then
