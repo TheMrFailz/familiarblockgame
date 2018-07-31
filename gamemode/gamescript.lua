@@ -81,7 +81,7 @@ function roundStart()
     local quickPlayerList = player.GetAll()
     
     if table.Count(quickPlayerList) > 0 then
-        fbg_worldload(quickPlayerList[1], "battletowerz_final_TEST")
+        fbg_worldload(quickPlayerList[1], "pirateshipbattle")
     else
         print("Not enough players to start the round! Trying again in 15 seconds.")
         timer.Simple(15, function()
@@ -112,7 +112,7 @@ end)
 
 
 function roundEnd()
-    local quickPlayerList = player.GetHumans()
+    local quickPlayerList = player.GetAll()
     for i = 1, player.GetCount() do
         --messageOverlay(quickPlayerList[i], "Restarting (regenerating world...)")
     end
@@ -121,3 +121,4 @@ function roundEnd()
     end)
     
 end
+

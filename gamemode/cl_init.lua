@@ -3,7 +3,7 @@ include( "robloxhud.lua")
 include( "robloxchat.lua")
 include( "camerastuff.lua")
 include( "buildmode.lua")
-
+include( "lavakillfield.lua")
 
 
 hook.Add('OnContextMenuOpen', 'NoContext4u', function()return false end)

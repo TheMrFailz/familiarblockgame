@@ -11,10 +11,10 @@ function ENT:Draw()
                                   -- Use this when you need to add to the rendering.
     --self:DrawEntityOutline( 1.0 ) -- Draw an outline of 1 world unit.
     
-    --local stretchtext = Material("models/bricktextures/stud_white.vtf", "translucent")
-    --local stretchtext2 = stretchtext:GetName()
+    local stretchtext = Material("models/bricktextures/stud_white.vtf", "translucent")
+    local stretchtext2 = stretchtext:GetName()
     
-    --self:SetMaterial(stretchtext2)
+    self:SetMaterial(stretchtext2)
     
     
     

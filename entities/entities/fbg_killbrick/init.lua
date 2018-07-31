@@ -22,10 +22,10 @@ function ENT:Initialize()
 	if (phys:IsValid()) then
 		phys:Wake()
 	end
-    
-    self:SetRenderMode( RENDERMODE_TRANSALPHA )
+    phys:SetMass(1)
+    --self:SetRenderMode( RENDERMODE_TRANSALPHA )
     self:SetColor(Color(255,255,0,10))
-    self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+    --self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
     --self:EmitSound("weapon_effects/rocket_fire.wav")
     phys:Sleep()
 end
@@ -63,6 +63,7 @@ end
 function ENT:Touch( toucher )
     if toucher:IsValid() then
         --print("Oolala")
+        --print(toucher)
         if toucher:IsPlayer() then
             toucher:Kill()
         end
@@ -73,28 +74,6 @@ function ENT:Touch( toucher )
 end
 
 function ENT:OnTakeDamage(dmg)
---[[
-    Leftover code from the original brick. We don't want kill bricks to break so we don't do anything here.
-    
-    if(self.Entity.OurHealth < (MaxHealth * 0.9)) then
-        Constraintable = false
-        if(self.Entity:GetPhysicsObject():IsMoveable() == false) then
-            self.Entity:GetPhysicsObject():EnableMotion(true)
-        end
-    end
-    
-    if(self.Entity.OurHealth < (MaxHealth * 0.50)) then
-        constraint.RemoveAll(self.Entity)
-    end
-    
-    
-    self.Entity:TakePhysicsDamage(dmg)
-    if(self.Entity.OurHealth <= 0) then return end
-    
-    self.Entity.OurHealth = self.Entity.OurHealth - dmg:GetDamage()
-    if(self.Entity.OurHealth <= 0) then
-        self.Entity:Remove()
-        
-    end]]
+
 end
 

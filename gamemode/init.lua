@@ -5,6 +5,7 @@ AddCSLuaFile( "robloxhud.lua")
 AddCSLuaFile( "robloxchat.lua")
 AddCSLuaFile( "buildmode.lua")
 AddCSLuaFile( "camerastuff.lua")
+AddCSLuaFile( "lavakillfield.lua")
 include( "shared.lua" )
 include( "roblox_guy.lua")
 include( "gamescript.lua")
@@ -30,7 +31,7 @@ include( "textureincludes.lua")
     ]]
 
 -- Can players go into build mode?
-isAllowed_Build = false
+isAllowed_Build = true
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
@@ -222,7 +223,6 @@ function GM:PlayerSetHandsModel( ply, ent )
 	end
 
 end
-
 
 
 -- Miscellanous functions

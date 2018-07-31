@@ -14,7 +14,7 @@ function ENT:Draw()
     --local stretchtext = Material("", "translucent")
     --local stretchtext2 = stretchtext:GetName()
     
-    --self:SetMaterial("bricks/fbg_lava")
+    self:SetMaterial("bricks/fbg_lava")
     
     
     
