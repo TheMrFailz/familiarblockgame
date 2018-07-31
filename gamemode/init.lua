@@ -31,7 +31,7 @@ include( "textureincludes.lua")
     ]]
 
 -- Can players go into build mode?
-isAllowed_Build = true
+isAllowed_Build = false
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
@@ -152,6 +152,7 @@ function GM:PlayerSpawn(ply)
         -- Set his team skin.
         local skinnameassembler = "models/misc/team_" .. team.GetName(ply:Team()) .. ".vtf"
         ply:SetMaterial(skinnameassembler)
+        
         
     end
     
@@ -314,6 +315,152 @@ function cleanupBricks(ignore)
         thingstokill[i]:Remove()
     end
     end 
+    
+end
+
+--[[ player clothing save function:
+    This function saves a player's "clothing".
+    Give it a player, a shirt texture reference,
+    and a clothing model reference.
+    
+    ]]
+    
+function playerClothingInit(ply)
+    local dataToInsert2 = { ply:SteamID(), "", "" }
+    local testTable = {}
+    table.insert(testTable, dataToInsert2)
+    local playerdata_c2 = util.Compress(testTable)
+    PrintTable(testTable)
+    file.Write("fbg_playerclothing.txt", testTable)
+    
+end
+
+concommand.Add("fbg_initclothes", function(ply, cmd, args)
+    playerClothingInit(ply)
+    end)
+    
+function playerClothingSave(ply, shirt, models)
+    local playerClothData = "fbg_playerclothing.txt"
+    
+    --print(file.Open(playerClothData, "r", ""))
+    
+    if file.Exists(playerClothData, "DATA") != true then
+        
+        
+        print("Alert: Player clothing file not found!")
+    else 
+        -- Open and read the compressed string.
+        local playerdata_c = file.Read(playerClothData)
+    
+        -- Decompress the string.
+        local playerdata_d = util.Decompress(playerdata_c)
+    
+        -- Convert to a table.
+        local playerdata_d = util.JSONToTable(playerdata_d)
+        
+        dataToInsert = { ply:SteamID(), shirt, models }
+        
+        local exists = false
+        local position = 1
+        local playerDat = {}
+        
+        for i = 1, table.length(playerdata_d) do
+            playerDat = playerdata_d[i]
+            if playerDat[1] == ply:SteamID() then
+                exists = true
+                position = i
+            end
+        end
+        
+        if exists == true then
+            playerdata_d[position] = dataToInsert
+        else
+            table.insert(playerdata_d, dataToInsert)
+        end
+        
+        playerdata_c = util.Compress(playerdata_d)
+        file.Write(playerClothData, playerdata_c)
+        
+        print("Alert: Player clothing file saved.")
+    end
+    
+    
+    
+end
+
+concommand.Add("fbg_saveclothes", function(ply, cmd, args)
+    print(ply)
+    playerClothingSave(ply, args[1], args[2])
+    end)
+
+--[[ player clothing load function:
+    This function loads a player's "clothing".
+    Give it a player and it'll set their clothes
+    
+    ]]
+    
+    
+function playerClothingLoad(ply)
+    local playerClothData = "fbg_data_playerclothing.txt"
+    
+    if file.Exists(playerClothData, "DATA") != true then
+        
+        
+        print("Alert: Player clothing file not found!")
+    else 
+        -- Open and read the compressed string.
+        local playerdata_c = file.Read(fileNameThing)
+    
+        -- Decompress the string.
+        local playerdata_d = util.Decompress(playerdata_c)
+    
+        -- Convert to a table.
+        local playerdata_d = util.JSONToTable(playerdata_d)
+        
+        
+        
+        local exists = false
+        local position = 1
+        local playerDat = {}
+        
+        for i = 1, table.length(playerdata_d) do
+            playerDat = playerdata_d[i]
+            if playerDat[1] == ply:SteamID() then
+                
+                exists = true
+                position = i
+                break
+            end
+        end
+        
+        if exists == true then
+            local hat = playerDat[3]
+            local shirt = playerDat[2]
+            local playerRef = player.GetBySteamID(playerDat[1])
+            local headbone = playerRef:LookupBone(ValveBiped.Bip01_Head1)
+            
+            if playerRef == false then 
+                print("Alert: Player not found!")
+                return
+            end
+            
+            playerRef:SetMaterial(shirt)
+            
+            local hatent = ents.Create("prop_physics")
+            hatent:SetModel(hat)
+            hatent:FollowBone(headbone)
+            
+            
+            print("Alert: Player clothing loaded.")
+        else
+            print("Alert: Player has no clothes!")
+        end
+        file.Write(playerClothData, playerdata_c)
+        
+        
+    end
+    
+    
     
 end
 

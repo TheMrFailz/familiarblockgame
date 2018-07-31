@@ -10,6 +10,7 @@ function GM:Initialize()
     local quickPlayerList = player.GetHumans()
     for i = 1, player.GetCount() do
         messageOverlay(quickPlayerList[i], "Beginning round in 35 seconds...")
+        
     end
     
     timer.Simple( 35, function()
@@ -92,7 +93,7 @@ function roundStart()
     
     local teamPicker = 3
     for i = 1, player.GetCount() do
-        
+        quickPlayerList[i]:Kill()
         quickPlayerList[i]:SetTeam(teamPicker)
         messageOverlay(quickPlayerList[i], "Round start! Destroy the enemy spawns!")
         timer.Simple(5, function()
@@ -115,8 +116,10 @@ function roundEnd()
     local quickPlayerList = player.GetAll()
     for i = 1, player.GetCount() do
         --messageOverlay(quickPlayerList[i], "Restarting (regenerating world...)")
+        quickPlayerList[i]:Kill()
     end
     timer.Simple(7, function()
+        
        roundStart()
     end)
     
