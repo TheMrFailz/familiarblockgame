@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/rblx_weapon/sword/rblx_sword"
+	"$surfaceprop" "Metal"
+	"$nolod" 1
+	"$translucent" 0
+}

@@ -1,4 +1,4 @@
-SWEP.PrintName			= "Paintball Gun" -- This will be shown in the spawn menu, and in the weapon selection menu
+SWEP.PrintName			= "Spade" -- This will be shown in the spawn menu, and in the weapon selection menu
 SWEP.Author			= "TheMrFailz" -- These two options will be shown when you have the weapon highlighted in the weapon selection menu
 
 SWEP.Spawnable = true
@@ -9,8 +9,8 @@ SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 1
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo		= "none"
-SWEP.Primary.Delay          = 3
-SWEP.Primary.Sound          = ""
+SWEP.Primary.Delay          = 12
+SWEP.Primary.Sound          = "weapon_effects/bass2.wav"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
@@ -33,36 +33,48 @@ SWEP.ShowViewModel = false
 SWEP.ShowWorldModel = false
 SWEP.ViewModelBoneMods = {}
 SWEP.VElements = {
-	["rocket_launcher"] = { type = "Model", model = "models/roblox_weapons/bomb/weapon_rblx_bomb.mdl", bone = "ValveBiped.Bip01_L_Forearm", rel = "", pos = Vector(-24.733, 32.238, -16.382), angle = Angle(-5.86, 84.486, -49.743), size = Vector(1.907, 1.907, 1.907), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+	["trowel"] = { type = "Model", model = "models/roblox_weapons/trowel/rblx_trowel.mdl", bone = "ValveBiped.Bip01_R_Forearm", rel = "", pos = Vector(-2.972, 20.548, -2.728), angle = Angle(62.323, -69.008, 49.106), size = Vector(0.426, 0.426, 0.426), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
 SWEP.WElements = {
-	["rocket"] = { type = "Model", model = "models/roblox_weapons/bomb/weapon_rblx_bomb.mdl", bone = "ValveBiped.Anim_Attachment_RH", rel = "", pos = Vector(1.866, -3.508, 2.061), angle = Angle(-43.936, -177.956, 102.056), size = Vector(1.342, 1.342, 1.342), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+	["spade"] = { type = "Model", model = "models/roblox_weapons/trowel/rblx_trowel.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(6.04, 1.376, -16.996), angle = Angle(-4.976, -111.487, 89.402), size = Vector(0.973, 0.973, 0.973), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
+
+local spawnedBricks = {}
 
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
     if SERVER then
-    local rocket = ents.Create( "roblox_rocket" )
-    if(!IsValid(rocket)) then return end
-    local spawnpos = self.Owner:LocalToWorld( Vector(70,0,60))
-    rocket:SetPos(spawnpos)
-    
-    rocket:Spawn() 
-    
-    local physics = rocket:GetPhysicsObject()
-    physics:Wake()
-    physics:EnableMotion( true )
-    physics:EnableGravity( false )
-    physics:EnableDrag( false )
-    physics:SetVelocity(self.Owner:GetAimVector()*1000)
-    
-    --print(self.Owner:EyeAngles())
-    print(self.Owner:GetViewEntity():GetPos())
-    
-    local FaceAngles = self.Owner:EyeAngles()
-    
-    rocket:SetAngles(Angle(0,FaceAngles.yaw + 90,FaceAngles.pitch))
+        local brickcolor = Color(math.random(50,255),math.random(50,255),math.random(50,255))
+        
+        for x = 1,3 do
+            for y = 1, 3 do
+                local brick = ents.Create( "roblox_brick_base" )
+                brick:SetModel(brickgenerator(4,2,2))
+                brick:SetPos(self.Owner:LocalToWorld(Vector(130,(x * 48) - 70, (y * 22) + 10)))
+                brick:SetAngles(Angle(0,self.Owner:GetAngles().y,self.Owner:GetAngles().z))
+                brick:SetColor(brickcolor)
+                brick:Spawn()
+                local physics = brick:GetPhysicsObject()
+                physics:Wake()
+                physics:EnableMotion( false )
+                
+                table.insert(spawnedBricks,brick)
+                
+            end
+        end
+        
+        timer.Simple(self.Primary.Delay, function()
+            for i = 1, table.Count(spawnedBricks) do
+                if spawnedBricks[i] != null then
+                    spawnedBricks[i]:Remove()
+                    
+                end
+            end
+            self.Owner:EmitSound("weapon_effects/switch_tick.wav")
+            spawnedBricks = {}
+        
+        end)
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
     --rocket:SetAngles(self.Owner:GetAimVector():Angle())
     end

@@ -22,8 +22,13 @@ function GM:Initialize()
 end
 
 local teamWeps = {
+    "rblx_paintballgun",
     "rblx_rocketlauncher",
-    "rblx_bomb"
+    "rblx_slingshot",
+    "rblx_superball",
+    "rblx_sword",
+    "rblx_bomb",
+    "rblx_spade"
 }
 
 local function teamWeaponGiver(ply)
@@ -52,6 +57,7 @@ function checkSpawns(quitBool)
     print("bloxx")
         local quickPlayerList = player.GetHumans()
         for i = 1, player.GetCount() do
+            quickPlayerList[i]:EmitSound("weapon_effects/victory_game.wav")
             messageOverlay(quickPlayerList[i], "Game over! The Bloxxers win!")
         end
         gameover = true
@@ -63,6 +69,7 @@ function checkSpawns(quitBool)
         print("oof")
         local quickPlayerList = player.GetHumans()
         for i = 1, player.GetCount() do
+            quickPlayerList[i]:EmitSound("weapon_effects/victory_game.wav")
             messageOverlay(quickPlayerList[i], "Game over! The Oofers win!")
         end
         gameover = true

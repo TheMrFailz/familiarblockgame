@@ -6,11 +6,10 @@ include('shared.lua')
 local Length = 4
 local Width = 1
 local Height = 1
-local MaxHealth = 500
+local MaxHealth = 750
 local Constraintable = true
-ENT.OurHealth = MaxHealth
+ENT.OurHealth = 1000000
 
-function Connector() end
  
 function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
@@ -24,6 +23,8 @@ function ENT:Initialize()
 		phys:Wake()
 	end
     phys:Sleep()
+    
+    self.Entity.OurHealth = MaxHealth
     
     --self:EmitSound("weapon_effects/rocket_fire.wav")
 end
@@ -42,6 +43,8 @@ end
  
 
 function ENT:OnTakeDamage(dmg)
+    
+    
     if(self.Entity.OurHealth < (MaxHealth * 0.6)) then
         Constraintable = false
         if(self.Entity:GetPhysicsObject():IsMoveable() == false) then
@@ -55,14 +58,16 @@ function ENT:OnTakeDamage(dmg)
     end
     if(self.Entity.OurHealth < (MaxHealth * 0.20)) then
         constraint.RemoveAll(self.Entity)
-        self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+        --self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
         
     end
     
     self.Entity:TakePhysicsDamage(dmg)
     if(self.Entity.OurHealth <= 0) then return end
-    
     self.Entity.OurHealth = self.Entity.OurHealth - dmg:GetDamage()
+    
+    
+    
     if(self.Entity.OurHealth <= 0) then
         self.Entity:Remove()
         

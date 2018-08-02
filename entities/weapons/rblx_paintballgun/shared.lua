@@ -9,8 +9,8 @@ SWEP.Primary.ClipSize		= 1
 SWEP.Primary.DefaultClip	= 1
 SWEP.Primary.Automatic		= false
 SWEP.Primary.Ammo		= "none"
-SWEP.Primary.Delay          = 3
-SWEP.Primary.Sound          = ""
+SWEP.Primary.Delay          = 0.2
+SWEP.Primary.Sound          = "weapon_effects/paintball2.wav"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
@@ -33,17 +33,20 @@ SWEP.ShowViewModel = false
 SWEP.ShowWorldModel = false
 SWEP.ViewModelBoneMods = {}
 SWEP.VElements = {
-	["rocket_launcher"] = { type = "Model", model = "models/roblox_weapons/bomb/weapon_rblx_bomb.mdl", bone = "ValveBiped.Bip01_L_Forearm", rel = "", pos = Vector(-24.733, 32.238, -16.382), angle = Angle(-5.86, 84.486, -49.743), size = Vector(1.907, 1.907, 1.907), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+	["paintballgun"] = { type = "Model", model = "models/roblox_weapons/paintballgun/weapon_rblx_paintballgun.mdl", bone = "ValveBiped.Bip01_L_Forearm", rel = "", pos = Vector(-31.688, 42.805, -16.955), angle = Angle(47.229, 0, 0), size = Vector(3.888, 3.888, 3.888), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
+
 SWEP.WElements = {
-	["rocket"] = { type = "Model", model = "models/roblox_weapons/bomb/weapon_rblx_bomb.mdl", bone = "ValveBiped.Anim_Attachment_RH", rel = "", pos = Vector(1.866, -3.508, 2.061), angle = Angle(-43.936, -177.956, 102.056), size = Vector(1.342, 1.342, 1.342), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+	["paintballgun"] = { type = "Model", model = "models/roblox_weapons/paintballgun/weapon_rblx_paintballgun.mdl", bone = "ValveBiped.Anim_Attachment_RH", rel = "", pos = Vector(0, -10.507, 3.002), angle = Angle(-50.26, 0, -92.338), size = Vector(1.368, 1.368, 1.368), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
+
+
 
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
     if SERVER then
-    local rocket = ents.Create( "roblox_rocket" )
+    local rocket = ents.Create( "roblox_paintball" )
     if(!IsValid(rocket)) then return end
     local spawnpos = self.Owner:LocalToWorld( Vector(70,0,60))
     rocket:SetPos(spawnpos)
@@ -53,12 +56,12 @@ function SWEP:PrimaryAttack()
     local physics = rocket:GetPhysicsObject()
     physics:Wake()
     physics:EnableMotion( true )
-    physics:EnableGravity( false )
-    physics:EnableDrag( false )
-    physics:SetVelocity(self.Owner:GetAimVector()*1000)
+    physics:EnableGravity( true )
+    physics:EnableDrag( true )
+    physics:SetVelocity((self.Owner:GetAimVector()*2000 ) + Vector(0,0,100))
     
     --print(self.Owner:EyeAngles())
-    print(self.Owner:GetViewEntity():GetPos())
+    --print(self.Owner:GetViewEntity():GetPos())
     
     local FaceAngles = self.Owner:EyeAngles()
     

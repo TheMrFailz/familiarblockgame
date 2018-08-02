@@ -11,3 +11,4 @@ ENT.Instructions	= ""
 if CLIENT then
     ENT.Category        = "Roblox Ents"
 end
+

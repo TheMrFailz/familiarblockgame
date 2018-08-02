@@ -44,3 +44,20 @@ function brickMatrixGenerator(entity, length, width, height)
     
 end
 
+
+-- Delicious footsteps.
+
+local stepnum = 1
+
+function GM:PlayerFootstep( ply, pos, foot, sound, volume, rf )
+    -- Override our default footsteps with the new ones.
+    
+    if stepnum >= 5 then
+        stepnum = 1
+    end
+    ply:EmitSound( "player/footsteps/step" .. stepnum .. ".wav" )
+    stepnum = stepnum + 1
+    
+	
+    return true
+end

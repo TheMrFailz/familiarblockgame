@@ -6,7 +6,7 @@ include('shared.lua')
 local Length = 4
 local Width = 2
 local Height = 1
-local MaxHealth = 150
+local MaxHealth = 550
 local Constraintable = true
 ENT.OurHealth = MaxHealth
 

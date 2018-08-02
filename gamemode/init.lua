@@ -31,7 +31,7 @@ include( "textureincludes.lua")
     ]]
 
 -- Can players go into build mode?
-isAllowed_Build = false
+isAllowed_Build = true
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
@@ -67,6 +67,16 @@ function GM:PlayerDeath( ply, wep, attacker )
     ply:EmitSound("player/custom/oof.wav", 100, 100, 1)
 end
 
+
+-- override other sounds.
+function KeyPressed(ply, key)
+    if key == 2 then
+        ply:EmitSound("weapon_effects/swoosh.wav")
+    end
+
+end
+hook.Add("KeyPress", "KeyPressedHook", KeyPressed)
+
 -- Buildmode command. Only works if build mode is enabled. 
 concommand.Add("join_buildmode", function( ply, cmd, args)
     if isAllowed_Build == true then
@@ -84,6 +94,7 @@ concommand.Add("join_buildmode", function( ply, cmd, args)
 -- Remove this? Lets you join a particular team.
 concommand.Add("fbg_join", function( ply, cmd, args)
     ply:SetTeam(args[1])
+    
 end)
     
 -- Remove this? Lets you join regular default play mode.
@@ -119,7 +130,7 @@ function GM:PlayerSpawn(ply)
     ply:SetupHands() -- setup our hands. 
     ply:SetCustomCollisionCheck( true )
     if ply:Team() == 1 or ply:Team() > 2 then
-        
+        ply:SetColor(Color(0,0,0))
         -- tall jumps oof.
         ply:SetJumpPower(250)
         
@@ -177,19 +188,9 @@ function GM:PlayerSpawn(ply)
 
 end
 
--- Delicious footsteps.
-local footstepTable = {
-    "player/footsteps/step1.wav",
-    "player/footsteps/step2.wav",
-    "player/footsteps/step3.wav",
-    "player/footsteps/step4.wav"
-    }
-
-function GM:PlayerFootstep( ply, pos, foot, sound, volume, rf )
-    -- Override our default footsteps with the new ones.
-	ply:EmitSound( table.Random(footstepTable) )
+function GM:GetFallDamage( ply, speed )
+	return ( 0 )
 end
-
 
 function GM:PlayerButtonDown(ply, button)
     -- Fixes the bug where build mode can't use their tools or switch them.
@@ -251,6 +252,37 @@ function rightAngleFind(ang)
     return finalAngle
 end
 
+--[[ setBrickHealth function:
+    Use this to update old maps with new brick health values. Otherwise they'll keep their old health.
+    bricktype is a string for the brick type and newhealth is your new int health value.
+    ]]
+function setBrickHealth(bricktype, newhealth)
+    local brickList = {}
+    
+    if bricktype == "normal" then
+        brickList = ents.FindByClass("roblox_brick_base")
+        
+        
+    elseif bricktype == "spawnpoint" then
+        brickList = ents.FindByClass("fbg_spawnpoint*")
+    
+    end
+    
+    for i = 1, table.Count(brickList) do
+        brickList[i].OurHealth = tonumber(newhealth,10)
+    end
+
+end
+
+-- REMOVE THIS
+concommand.Add("fbg_setbrickhealth", function(ply, cmd, args)
+    if isAllowed_Build == true then
+        setBrickHealth(args[1],args[2])
+    else
+        print("Sorry! Buildmode disabled!")
+    end
+    end)
+    
 
 --[[ spawnListAssembler function:
     Feed it the color of your team (note: this means no identical team colors allowed)

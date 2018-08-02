@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/rblx_weapon/slingshot/rblx_slingshot"
+	"$surfaceprop" "Metal"
+	"$nolod" 1
+}
