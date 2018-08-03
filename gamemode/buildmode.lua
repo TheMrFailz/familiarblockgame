@@ -3,6 +3,8 @@ buildPanel:SetSize(ScrW(), ScrH())
 buildPanel:SetPos(0,0)
 buildPanel:SetAlpha(0)
 buildPanel:SetWorldClicker(true)
+buildPanel:ShowCloseButton(false)
+buildPanel:SetDraggable(false)
 
 
 --[[ Just a heads up this is basically gonna be a clone of the context menu meme

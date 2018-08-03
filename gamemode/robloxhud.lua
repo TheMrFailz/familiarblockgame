@@ -93,6 +93,24 @@ function RScoreBoard()
     
 end
 
+function RCrossHair()
+    local x, y = gui.MousePos()
+    
+    if x == 0 and y == 0 then
+        x2 = ScrW()
+        y2 = ScrH()
+    else
+        x2 = x
+        y2 = y
+    end
+    
+    surface.SetDrawColor(255,255,255,255)
+    surface.SetMaterial(Material('materials/entities/crosshair_arrow.png'))
+    surface.DrawTexturedRect(x2,y2,32,32)
+
+end
+
+hook.Add("HUDPaint", "RobloxCrosshair", RCrossHair)
 hook.Add("HUDPaint", "RobloxWeaponSelect", WeaponSelect)
 hook.Add("HUDPaint", "RobloxScoreBoard", RScoreBoard)
 

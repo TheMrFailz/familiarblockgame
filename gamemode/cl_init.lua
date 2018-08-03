@@ -122,10 +122,12 @@ end
 hook.Add("HUDPaint", "RobloxOverlay", messageOvControl)
 
 local ScrollDist = 30
-
-
-
-
+local CamPos -- This is for keeping track of where the thirdperson cam is.
+local moveClickDelay = 0
+local Distance2Move = 0
+local walktimeGlobal = 0
+--local hasChanged = false
+--local isMoving = false
 
 --==============================================================
 --[[ This controls the dank thirdperson cam. ]]
@@ -137,7 +139,12 @@ mousePanel2:SetPos(0,0)
 mousePanel2:SetAlpha(0)
 mousePanel2:SetWorldClicker(true)
 mousePanel2:ShowCloseButton(true)
-mousePanel2:SetDraggable(true)
+mousePanel2:SetCursor("blank")
+mousePanel2:SetKeyboardInputEnabled( true )
+--mousePanel2:SetDraggable(true)
+
+
+
 function mousePanel2:OnMouseWheeled(delta)
     if delta == 1 then
         ScrollDist = ScrollDist - 10
@@ -147,17 +154,59 @@ function mousePanel2:OnMouseWheeled(delta)
     end
 end
 
+--[[ This is how we do click to move. It's mega jank.]]
+function click2move()
+    
+    if (ScrollDist > 5 && input.IsMouseDown(MOUSE_MIDDLE) == true) && moveClickDelay < CurTime() then
+        
+        
+        local x, y = gui.MousePos()
+        
+        local tr = util.QuickTrace( CamPos, gui.ScreenToVector( gui.MousePos() ) * 100000, LocalPlayer() )
+        
+        
+        local ShootyShootPos = LocalPlayer():GetShootPos()
+        
+        local Dist = LocalPlayer():GetPos():Distance(tr.HitPos)
+        
+        if Dist <= 1000 then
+            LocalPlayer():SetEyeAngles((tr.HitPos - ShootyShootPos):Angle())
+            
+            local walktime = Dist / 210
+            walktimeGlobal = CurTime() + walktime
+            LocalPlayer():ConCommand("+forward")
+            
+            
+            timer.Simple(walktime, function()
+                
+                if walktimeGlobal < CurTime() then
+                    LocalPlayer():ConCommand("-forward")
+                end
+            end)
+            
+            
+            
+        end
+        moveClickDelay = CurTime() + 0.5
+    end
+
+    
+end
+
+hook.Add( "Think", "Click2Move", click2move )
+
+
 --[[ Just a heads up this is basically gonna be a clone of the context menu meme
 
 ]]
 --vgui.Register( "CoolmousePanel2", mousePanel2, "EditablePanel")
 function mousePanel2:Init()
     -- I guess we setup our panel here? Really hacky shit imo.
-    
+
     self:SetSize(ScrW(), ScrH())
     --self:Center()
     self:SetWorldClicker(false)
-    
+    self:SetCursor("blank")
     
 end
 
@@ -167,12 +216,12 @@ function mousePanel2:Open()
     CloseDermaMenus()
     
     mousePanel2:SetAlpha(0)
-    
-    self:MakePopup()
+
+    --self:MakePopup()
+    gui.EnableScreenClicker(true)
     self:SetVisible(true)
     self:SetKeyboardInputEnabled( false )
     self:SetMouseInputEnabled( true )
-    
     RestoreCursorPosition()
     
     
@@ -181,9 +230,8 @@ end
 
 function mousePanel2:Close( bSkipAnim )
 
-
+    gui.EnableScreenClicker(false)
 	RememberCursorPosition()
-
 	
     --self:MakePopup(false)
 	self:SetKeyboardInputEnabled( false )
@@ -220,11 +268,11 @@ function pivotView()
     if CLIENT then
         
         
-        if input.IsMouseDown(MOUSE_LEFT) == true then
+        if input.IsMouseDown(MOUSE_MIDDLE) == true then
             if clicktoggle == true then
                 local posx, posy = mousePanel2:CursorPos()
                 local aimpos = LocalPlayer():GetAimVector()
-                print(aimpos)
+                --print(aimpos)
                 clicktoggle = false
             end
         else
@@ -247,6 +295,11 @@ function pivotView()
             end
         end
     end
+    
+    if LocalPlayer():Team() == 2 then
+        disableMouseControls(LocalPlayer())
+    end
+    
 end
 hook.Add("Think", "pivotView", pivotView)
 
@@ -273,13 +326,15 @@ local function MyCalcView( ply, pos, angles, fov )
     end
     if ScrollDist > 275 then ScrollDist = 275 end
     
-    if ScrollDist != 5 then
+    if ScrollDist != 5 and LocalPlayer():Team() != 2 then
     
 	local view = {}
    
 	view.origin = pos + Vector(0,0,(ScrollDist))-( angles:Forward()*((ScrollDist * 4)) )
     local ViewPos = pos + Vector(0,0,(ScrollDist))-( angles:Forward()*((ScrollDist * 4)) )
     local ViewAng = (((ply:GetPos() + Vector(0,0,70)) - ViewPos)):GetNormalized():Angle()
+    
+    CamPos = ViewPos
     
 	view.angles = ViewAng
 	view.fov = fov

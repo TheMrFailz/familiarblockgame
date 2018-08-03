@@ -51,7 +51,7 @@ function SWEP:PrimaryAttack()
             for y = 1, 3 do
                 local brick = ents.Create( "roblox_brick_base" )
                 brick:SetModel(brickgenerator(4,2,2))
-                brick:SetPos(self.Owner:LocalToWorld(Vector(130,(x * 48) - 70, (y * 22) + 10)))
+                brick:SetPos(self.Owner:LocalToWorld(Vector(130,(x * 48) - 70, (y * 24) + 20)))
                 brick:SetAngles(Angle(0,self.Owner:GetAngles().y,self.Owner:GetAngles().z))
                 brick:SetColor(brickcolor)
                 brick:Spawn()

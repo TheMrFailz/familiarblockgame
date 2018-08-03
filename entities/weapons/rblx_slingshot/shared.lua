@@ -38,9 +38,10 @@ SWEP.VElements = {
 SWEP.WElements = {
 	["slingshot"] = { type = "Model", model = "models/roblox_weapons/slingshot/rblx_slingshot.mdl", bone = "ValveBiped.Anim_Attachment_RH", rel = "", pos = Vector(1.108, -11.334, 2.138), angle = Angle(-45.692, 0, -94.214), size = Vector(1.07, 1.07, 1.07), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
-
+local weaponInstance
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
+    weaponInstance = self.Weapon
     self.Weapon:EmitSound(self.Primary.Sound)
     if SERVER then
     local rocket = ents.Create( "roblox_ball" )

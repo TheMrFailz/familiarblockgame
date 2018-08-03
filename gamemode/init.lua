@@ -37,6 +37,8 @@ util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
 util.AddNetworkString( "dupeTransfer" )
 
+util.PrecacheModel( "props_c17/clock01" )
+
 --[[ Message overlay function.
     Call this with a player and then a string message as an argument
     to make an overlay on the player in question's screenw it a message.

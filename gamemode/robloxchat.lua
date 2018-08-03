@@ -32,25 +32,68 @@ function QuickMenuButtons()
     buttonFrame:SetPos(0,0)
     buttonFrame:SetSize(650, 30)
     buttonFrame:SetDraggable(false)
-    buttonFrame:ShowCloseButton(true)
+    buttonFrame:ShowCloseButton(false)
     buttonFrame:SetTitle("")
     buttonFrame.Paint = function( self, w, h )
-        
+        --draw.RoundedBox( 0, 0, 0, w, h, Color(255, 0, 255,100) )
     end
     
     local buttonButton1 = vgui.Create( "DButton", buttonFrame ) 
     buttonButton1:SetText( "" )					
-    buttonButton1:SetPos( 370, 0 )					
-    buttonButton1:SetSize( 120, 30 )					
+    buttonButton1:SetPos( 380, 0 )					
+    buttonButton1:SetSize( 90, 30 )					
     buttonButton1.DoClick = function()				
-        gui.OpenURL( "https://i.imgur.com/Xs4x8Bl.png" )			
+        gui.OpenURL( "http://freetexthost.com/yasuhm4yog" )			
     end
     buttonButton1.Paint = function(self, w, h)
-        --draw.RoundedBox( 0, 0, 0, w, h, Color(255, 0, 0,200) )
+        --draw.RoundedBox( 0, 0, 0, w, h, Color(255, 0, 0,100) )
     end
     
+    local insertButton = vgui.Create( "DButton", buttonFrame ) 
+    insertButton:SetText( "" )					
+    insertButton:SetPos( 90, 0 )					
+    insertButton:SetSize( 120, 30 )					
+    insertButton.DoClick = function()				
+        --gui.OpenURL( "" )			
+    end
+    insertButton.Paint = function(self, w, h)
+        --draw.RoundedBox( 0, 0, 0, w, h, Color(0, 255, 0,100) )
+    end
+    --[[
+    local  = vgui.Create( "DButton", buttonFrame ) 
+    :SetText( "" )					
+    :SetPos( 90, 0 )					
+    :SetSize( 120, 30 )					
+    .DoClick = function()				
+        gui.OpenURL( "" )			
+    end
+    .Paint = function(self, w, h)
+        draw.RoundedBox( 0, 0, 0, w, h, Color(0, 255, 0,100) )
+    end
+    ]]
     
-
+    local toolsButton = vgui.Create( "DButton", buttonFrame ) 
+    toolsButton:SetText( "" )					
+    toolsButton:SetPos( 0, 0 )					
+    toolsButton:SetSize( 90, 30 )					
+    toolsButton.DoClick = function()				
+        LocalPlayer():ConCommand("join_buildmode")
+    end
+    toolsButton.Paint = function(self, w, h)
+        
+    end
+    
+    local exitButton = vgui.Create( "DButton", buttonFrame ) 
+    exitButton:SetText( "" )					
+    exitButton:SetPos( 500, 0 )					
+    exitButton:SetSize( 100, 30 )					
+    exitButton.DoClick = function()				
+        LocalPlayer():ConCommand("disconnect")
+    end
+    exitButton.Paint = function(self, w, h)
+        
+    end
+    
 end
 
 function ChatBoxSetup()
@@ -65,7 +108,7 @@ function ChatBoxSetup()
     
     chatBoxThing.dFrame:SetPos(20, 50)
     chatBoxThing.dFrame:SetSize(chatW,chatH)
-    chatBoxThing.dFrame:SetDraggable(true)
+    chatBoxThing.dFrame:SetDraggable(false)
     chatBoxThing.dFrame:ShowCloseButton(false)
     chatBoxThing.dFrame:SetTitle("")
     chatBoxThing.dFrame.Paint = function( self, w, h )
@@ -98,7 +141,7 @@ end
 hook.Add("Initialize", "RobloxChatBox2", function()
     
     ChatBoxSetup()
-    --QuickMenuButtons()
+    QuickMenuButtons()
 end)
     
 
@@ -106,7 +149,7 @@ end)
 
 
 concommand.Add("reload_chat", function( ply, cmd, args)
-    --QuickMenuButtons()
+    QuickMenuButtons()
     ChatBoxSetup()
 end)
 
