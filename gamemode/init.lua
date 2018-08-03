@@ -108,6 +108,10 @@ end)
 function GM:PlayerInitialSpawn(ply)
     ply:ConCommand("join_playmode")
     ply:SetTeam(math.Round(math.random(3,4)))
+    --ply:ConCommand("thirdperson")
+        
+        --ply:ConCommand("thirdperson_platformer 1")
+        --ply:ConCommand("thirdperson_mayamode")
     
 end
 
@@ -150,6 +154,10 @@ function GM:PlayerSpawn(ply)
     if ply:Team() == 1 or ply:Team() > 2 then
         
         
+        
+        
+        umsg.Start("openMoveControls", ply)
+        umsg.End() 
         
         ply:SetColor(Color(255,255,225))
         -- tall jumps oof.
