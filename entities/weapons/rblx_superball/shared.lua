@@ -39,6 +39,11 @@ SWEP.WElements = {
 	["ball"] = { type = "Model", model = "models/hunter/misc/sphere375x375.mdl", bone = "ValveBiped.Anim_Attachment_RH", rel = "", pos = Vector(3.573, -2.48, 7.057), angle = Angle(0, 0, 0), size = Vector(0.137, 0.137, 0.137), color = Color(255, 255, 255, 255), surpresslightning = false, material = "debug/env_cubemap_model", skin = 0, bodygroup = {} }
 }
 
+
+function SWEP:SecondaryAttack()
+    return false
+end
+
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)

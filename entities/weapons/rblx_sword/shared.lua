@@ -43,6 +43,7 @@ SWEP.angle2b = Angle(0,0,0)
 
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
+    
     local swingsounds = { "weapon_effects/swordslash.wav",
         "weapon_effects/swordslash.wav",
         "weapon_effects/swordslash.wav",
@@ -53,17 +54,17 @@ function SWEP:PrimaryAttack()
     
     self.Weapon:EmitSound(swingsounduse)
    
-    
+    if SERVER then
     local traceattack = util.TraceLine( {
         start = self.Owner:EyePos(),
-        endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 30,
+        endpos = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 150,
         filter = self.Owner
     } )
     
     if (traceattack.Entity != null) then
         if traceattack.Entity:IsPlayer() == true || traceattack.Entity:IsNPC() then
             local damageInfo = DamageInfo()
-            damageInfo:SetDamage(33)
+            damageInfo:SetDamage(43)
             damageInfo:SetAttacker(self)
             damageInfo:SetDamageType(DMG_SLASH)
             traceattack.Entity:TakeDamageInfo(damageInfo)
@@ -74,10 +75,13 @@ function SWEP:PrimaryAttack()
     
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
     --rocket:SetAngles(self.Owner:GetAimVector():Angle())
-    
+    end
 end
 
 
+function SWEP:SecondaryAttack()
+    return false
+end
 function SWEP:Deploy()
     self.Owner:EmitSound("weapon_effects/unsheath.wav")
 

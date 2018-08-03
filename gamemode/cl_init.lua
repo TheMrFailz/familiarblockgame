@@ -1,7 +1,7 @@
 include( "shared.lua" )
 include( "robloxhud.lua")
 include( "robloxchat.lua")
-include( "camerastuff.lua")
+--include( "camerastuff.lua")
 include( "buildmode.lua")
 include( "lavakillfield.lua")
 
@@ -47,9 +47,13 @@ local messageOverlay = {}
 messageOverlay.text = ""
 messageOverlay.time = 0
 
+function enableMoveControls()
+enableMouseControls()
+
+end
+
 usermessage.Hook("openBuildControls", enableBuildControls)
-
-
+ 
 net.Receive("client_ScreenMessage", function()
     local ply = net.ReadEntity()
     local message = net.ReadString()
@@ -116,5 +120,3 @@ function messageOvControl()
 end
 
 hook.Add("HUDPaint", "RobloxOverlay", messageOvControl)
-
-

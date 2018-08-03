@@ -108,6 +108,24 @@ end)
 function GM:PlayerInitialSpawn(ply)
     ply:ConCommand("join_playmode")
     ply:SetTeam(math.Round(math.random(3,4)))
+    
+end
+
+local timerWait = 0
+
+function GM:Think()
+    if timerWait < CurTime() then
+        timerWait = CurTime() + 5
+        local fallers = ents.FindInBox( Vector(-9344, 8286, -6740), Vector(9336, -8326, -318))
+        for i = 1, table.Count(fallers) do
+            if fallers[i]:IsPlayer() then
+                fallers[i]:Kill()
+            else
+                fallers[i]:Remove()
+            end
+        end
+    end
+
 end
 
 function GM:ShouldCollide( ent1, ent2 )
@@ -125,12 +143,19 @@ function GM:ShouldCollide( ent1, ent2 )
 	return true
 
 end
-    
+
 function GM:PlayerSpawn(ply)
     ply:SetupHands() -- setup our hands. 
     ply:SetCustomCollisionCheck( true )
     if ply:Team() == 1 or ply:Team() > 2 then
-        ply:SetColor(Color(0,0,0))
+        
+        
+        
+        
+        umsg.Start("openMoveControls", ply)
+        umsg.End() 
+        
+        ply:SetColor(Color(255,255,225))
         -- tall jumps oof.
         ply:SetJumpPower(250)
         
@@ -225,6 +250,7 @@ function GM:PlayerSetHandsModel( ply, ent )
 	end
 
 end
+
 
 
 -- Miscellanous functions

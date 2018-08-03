@@ -41,6 +41,11 @@ SWEP.WElements = {
 	["rocket"] = { type = "Model", model = "models/roblox_weapons/rocketlauncher/weapon_rblx_rocketlauncher.mdl", bone = "ValveBiped.Anim_Attachment_RH", rel = "", pos = Vector(-6.937, -11.771, -4.824), angle = Angle(-43.936, -177.956, 102.056), size = Vector(3.986, 3.986, 3.986), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
 
+
+function SWEP:SecondaryAttack()
+    return false
+end
+
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)

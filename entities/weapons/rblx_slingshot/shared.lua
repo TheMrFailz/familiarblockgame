@@ -68,6 +68,11 @@ function SWEP:PrimaryAttack()
     end
 end
 
+
+function SWEP:SecondaryAttack()
+    return false
+end
+
 function SWEP:Initialize()
 
 	self:SetHoldType( self.HoldType )

@@ -13,7 +13,7 @@ function GM:Initialize()
         
     end
     
-    timer.Simple( 35, function()
+    timer.Simple( 15, function()
         roundStart()
     
     end)

@@ -67,17 +67,28 @@ function SWEP:PrimaryAttack()
         timer.Simple(self.Primary.Delay, function()
             for i = 1, table.Count(spawnedBricks) do
                 if spawnedBricks[i] != null then
+                    if spawnedBricks[i]:IsValid() then
                     spawnedBricks[i]:Remove()
+                    end
                     
                 end
             end
-            self.Owner:EmitSound("weapon_effects/switch_tick.wav")
+            --self.Owner:EmitSound("weapon_effects/switch_tick.wav")
             spawnedBricks = {}
         
         end)
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
     --rocket:SetAngles(self.Owner:GetAimVector():Angle())
     end
+end
+
+function SWEP:SecondaryAttack()
+    return false
+end
+
+function SWEP:OnRemove()
+    spawnedBricks = {}
+
 end
 
 function SWEP:Initialize()

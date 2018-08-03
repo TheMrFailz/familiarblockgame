@@ -6,6 +6,15 @@ GM.Email = "N/A"
 GM.Website = "N/A"
 GM.TeamBased = false
 
+AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "shared.lua" )
+AddCSLuaFile( "roblox_guy.lua" )
+AddCSLuaFile( "robloxhud.lua")
+AddCSLuaFile( "robloxchat.lua")
+AddCSLuaFile( "buildmode.lua")
+AddCSLuaFile( "camerastuff.lua")
+AddCSLuaFile( "lavakillfield.lua")
+
 function GM:Initialize()
     
 end
