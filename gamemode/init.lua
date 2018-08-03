@@ -151,10 +151,6 @@ function GM:PlayerSpawn(ply)
         
         
         
-        
-        umsg.Start("openMoveControls", ply)
-        umsg.End() 
-        
         ply:SetColor(Color(255,255,225))
         -- tall jumps oof.
         ply:SetJumpPower(250)
