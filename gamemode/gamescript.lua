@@ -1,6 +1,6 @@
 -- This is where you should be doing your ~custom~ sub gamemode meme.
 -- Consider include'ing sub-files if you want to do multiple sub gamemodes and you want to pick between them.
-
+if SERVER then 
 local roundTime = -1
 local roundLength = 180
 
@@ -46,14 +46,14 @@ end
 hook.Add("PlayerSpawn", "teamWeaponGiverHook", teamWeaponGiver)
 
 
-
+local gameover = false
 function checkSpawns(quitBool)
     if quitBool == true then return end
     local oofTeam = spawnListAssembler(Color(0, 165, 255, 255))
     local bloxxTeam = spawnListAssembler(Color(255, 136, 0, 255))
-    local gameover = false
     
-    if table.GetFirstValue(oofTeam) == nil then
+    
+    if table.GetFirstValue(oofTeam) == nil && gameover != true then
     print("bloxx")
         local quickPlayerList = player.GetHumans()
         for i = 1, player.GetCount() do
@@ -65,7 +65,7 @@ function checkSpawns(quitBool)
             roundEnd()
         end)
     end
-    if table.GetFirstValue(bloxxTeam) == nil then
+    if table.GetFirstValue(bloxxTeam) == nil && gameover != true then
         print("oof")
         local quickPlayerList = player.GetHumans()
         for i = 1, player.GetCount() do
@@ -115,7 +115,11 @@ function roundStart()
 end 
 -- NOTE TO SELF REMOVE THIS
 concommand.Add("fbg_forceStart", function(ply, cmd, args)
-    roundStart()
+    if isAllowed_Build == true then
+        roundStart()
+    else
+        print("Sorry buildmode disabled!")
+    end
 end)
 
 
@@ -123,12 +127,13 @@ function roundEnd()
     local quickPlayerList = player.GetAll()
     for i = 1, player.GetCount() do
         --messageOverlay(quickPlayerList[i], "Restarting (regenerating world...)")
-        quickPlayerList[i]:Kill()
+        --quickPlayerList[i]:Kill()
     end
     timer.Simple(7, function()
         
        roundStart()
     end)
-    
+   gameover = false
 end
 
+end

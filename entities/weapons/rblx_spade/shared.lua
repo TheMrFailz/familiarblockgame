@@ -39,11 +39,12 @@ SWEP.WElements = {
 	["spade"] = { type = "Model", model = "models/roblox_weapons/trowel/rblx_trowel.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(6.04, 1.376, -16.996), angle = Angle(-4.976, -111.487, 89.402), size = Vector(0.973, 0.973, 0.973), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
 
-local spawnedBricks = {}
+SWEP.spawnedBricks = {}
 
 function SWEP:PrimaryAttack()
     --if ( !self:CanPrimaryAttack() ) then return end
     self.Weapon:EmitSound(self.Primary.Sound)
+    
     if SERVER then
         local brickcolor = Color(math.random(50,255),math.random(50,255),math.random(50,255))
         
@@ -51,30 +52,33 @@ function SWEP:PrimaryAttack()
             for y = 1, 3 do
                 local brick = ents.Create( "roblox_brick_base" )
                 brick:SetModel(brickgenerator(4,2,2))
+                
+                
+                
                 brick:SetPos(self.Owner:LocalToWorld(Vector(130,(x * 48) - 70, (y * 24) + 20)))
-                brick:SetAngles(Angle(0,self.Owner:GetAngles().y,self.Owner:GetAngles().z))
+                brick:SetAngles(Angle(0,self.Owner:GetAngles().y,0))
                 brick:SetColor(brickcolor)
                 brick:Spawn()
                 local physics = brick:GetPhysicsObject()
                 physics:Wake()
                 physics:EnableMotion( false )
                 
-                table.insert(spawnedBricks,brick)
+                table.insert(self.Weapon.spawnedBricks,brick)
                 
             end
         end
         
         timer.Simple(self.Primary.Delay, function()
-            for i = 1, table.Count(spawnedBricks) do
-                if spawnedBricks[i] != null then
-                    if spawnedBricks[i]:IsValid() then
-                    spawnedBricks[i]:Remove()
+            for i = 1, table.Count(self.Weapon.spawnedBricks) do
+                if self.Weapon.spawnedBricks[i] != null then
+                    if self.Weapon.spawnedBricks[i]:IsValid() then
+                    self.Weapon.spawnedBricks[i]:Remove()
                     end
                     
                 end
             end
             --self.Owner:EmitSound("weapon_effects/switch_tick.wav")
-            spawnedBricks = {}
+            self.Weapon.spawnedBricks = {}
         
         end)
     self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)

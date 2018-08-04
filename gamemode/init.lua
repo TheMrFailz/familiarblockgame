@@ -31,12 +31,12 @@ include( "textureincludes.lua")
     ]]
 
 -- Can players go into build mode?
-isAllowed_Build = true
+isAllowed_Build = false
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
 util.AddNetworkString( "dupeTransfer" )
-
+util.AddNetworkString( "client_changethird" )
 util.PrecacheModel( "props_c17/clock01" )
 
 --[[ Message overlay function.
@@ -98,22 +98,20 @@ concommand.Add("fbg_join", function( ply, cmd, args)
     ply:SetTeam(args[1])
     
 end)
-    
+--[[
 -- Remove this? Lets you join regular default play mode.
 concommand.Add("join_playmode", function( ply, cmd, args)
     ply:SetTeam(1)
     ply:UnSpectate()
     ply:Kill()
 end)
-    
+    ]]
 -- Spawn function. Give them a random team. 
 function GM:PlayerInitialSpawn(ply)
-    ply:ConCommand("join_playmode")
+    --ply:ConCommand("join_playmode")
     ply:SetTeam(math.Round(math.random(3,4)))
-    --ply:ConCommand("thirdperson")
-        
-        --ply:ConCommand("thirdperson_platformer 1")
-        --ply:ConCommand("thirdperson_mayamode")
+    ply:Kill()
+    ply.EnableThirdPerson = false
     
 end
 
@@ -153,6 +151,15 @@ end
 function GM:PlayerSpawn(ply)
     ply:SetupHands() -- setup our hands. 
     ply:SetCustomCollisionCheck( true )
+    
+    --=== THIS LINE IS JUST FOR THE DEMO GAMEMODE
+    if ply:Team() == 1 then
+        ply:SetTeam(math.Round(math.random(3,4)))
+    end
+    
+    
+    --=== END ===---
+    
     if ply:Team() == 1 or ply:Team() > 2 then
         
         
@@ -262,6 +269,20 @@ end
 -- Miscellanous functions
 --- Related variables:
 
+--[[ TURN OFF THE DAMN THIRDPERSON COMMAND:
+    True = On, false = off
+]]
+
+function enableThirdPerson(ply,cmd,args)
+    ply.EnableThirdPerson = args[1]
+    print(ply:Nick() .. "'s thirdperson has been " .. ply.EnableThirdPerson)
+    net.Start("client_changethird")
+    net.WriteBool(args[1])
+    net.Send(ply)
+end
+
+concommand.Add("fbg_thirdperson_enable", enableThirdPerson)
+
 --[[ rightAngleFind function:
     Input an angle and it'll return the closest 90 degree angle (NESW)
     ]]
@@ -306,7 +327,6 @@ function setBrickHealth(bricktype, newhealth)
 
 end
 
--- REMOVE THIS
 concommand.Add("fbg_setbrickhealth", function(ply, cmd, args)
     if isAllowed_Build == true then
         setBrickHealth(args[1],args[2])
@@ -939,6 +959,11 @@ end
 
 -- NOTE TO SELF: REMOVE THIS COMMAND LATER.
 concommand.Add("fbg_worldload", function(ply, cmd, args)
+    if isAllowed_Build then
     fbg_worldload(ply, args[1])
+    else
+    print("Sorry buildmode disabled!")
+    end
+    
     end)
 

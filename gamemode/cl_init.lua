@@ -5,6 +5,11 @@ include( "robloxchat.lua")
 include( "buildmode.lua")
 include( "lavakillfield.lua")
 
+function GM:SpawnMenuOpen()
+    --Just for the competition i'm disabling the q menu cuz I dont have any way to figure out if this admin check works.
+    --return LocalPlayer():IsAdmin()
+    return false
+end
 
 hook.Add('OnContextMenuOpen', 'NoContext4u', function()return false end)
 local hide = {
@@ -89,7 +94,11 @@ net.Receive("client_SaveWorld", function()
         magicDupeMachine(message, fileName)
     end
 end)
- 
+
+LocalPlayer().EnableThirdPerson = false
+net.Receive("client_changethird", function()
+    LocalPlayer().EnableThirdPerson = net.ReadBool()
+    end)
 
 function messageOv(ply, message)
     
@@ -121,7 +130,9 @@ end
 
 hook.Add("HUDPaint", "RobloxOverlay", messageOvControl)
 
-local ScrollDist = 30
+
+
+local ScrollDist = 0
 local CamPos -- This is for keeping track of where the thirdperson cam is.
 local moveClickDelay = 0
 local Distance2Move = 0
@@ -156,7 +167,7 @@ end
 
 --[[ This is how we do click to move. It's mega jank.]]
 function click2move()
-    
+    if LocalPlayer().EnableThirdPerson == true then
     if (ScrollDist > 5 && input.IsMouseDown(MOUSE_MIDDLE) == true) && moveClickDelay < CurTime() then
         
         
@@ -189,7 +200,7 @@ function click2move()
         end
         moveClickDelay = CurTime() + 0.5
     end
-
+    end
     
 end
 
@@ -264,7 +275,7 @@ end
 local toggle = false
 local clicktoggle = false
 function pivotView()
-
+    if LocalPlayer().EnableThirdPerson == true then
     if CLIENT then
         
         
@@ -299,7 +310,10 @@ function pivotView()
     if LocalPlayer():Team() == 2 then
         disableMouseControls(LocalPlayer())
     end
-    
+    else
+        disableMouseControls(LocalPlayer())
+    end
+    --print(LocalPlayer().EnableThirdPerson)
 end
 hook.Add("Think", "pivotView", pivotView)
 
