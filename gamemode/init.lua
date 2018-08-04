@@ -408,7 +408,7 @@ end
     and a clothing model reference.
     
     ]]
-    
+    --[[
 function playerClothingInit(ply)
     local dataToInsert2 = { ply:SteamID(), "", "" }
     local testTable = {}
@@ -477,11 +477,11 @@ concommand.Add("fbg_saveclothes", function(ply, cmd, args)
     playerClothingSave(ply, args[1], args[2])
     end)
 
---[[ player clothing load function:
+-- player clothing load function:
     This function loads a player's "clothing".
     Give it a player and it'll set their clothes
     
-    ]]
+    
     
     
 function playerClothingLoad(ply)
@@ -512,7 +512,7 @@ function playerClothingLoad(ply)
             if playerDat[1] == ply:SteamID() then
                 
                 exists = true
-                position = i
+                position = i 
                 break
             end
         end
@@ -547,6 +547,8 @@ function playerClothingLoad(ply)
     
     
 end
+]]
+
 
 -- BRICK RELATED CODE BEGINS HERE
 

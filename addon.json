@@ -1,0 +1,6 @@
+{
+"title" : "Familiar Block Game",
+"type" : "gamemode",
+"tags" : ["cartoon","fun"],
+"ignore" : ["*.psd", "*.vcproj", "*.svn*"]
+}
