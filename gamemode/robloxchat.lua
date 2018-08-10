@@ -157,7 +157,7 @@ end)
 hook.Add( "OnPlayerChat", "myChat", function( player, strText, bTeamOnly, bPlayerIsDead ) 
 	--local col = GAMEMODE:GetTeamColor( player ) -- Get the player's team color
     --chatBoxThing.dRichText:InsertColorChange(col)
-    local col = team.GetColor(ply:Team())
+    local col = team.GetColor(player:Team())
     local r, g, b, a = col.r, col.g, col.b, col.a
     chatBoxThing.dRichText:InsertColorChange(r,g,b,a)
     chatBoxThing.dRichText:AppendText(player:GetName())
