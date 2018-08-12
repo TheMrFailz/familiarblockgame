@@ -954,7 +954,7 @@ function fbg_worldload(ply, fileName)
     
     
     -- Begin pasting the map. REQUIRES A PLAYER OF SOME SORT.
-    duplicator.Paste( ply, mapData_d.Entities, mapData_d.Constraints)
+    duplicator.Paste( nil, mapData_d.Entities, mapData_d.Constraints)
     
     print("DING! Paste is done.")
 end
