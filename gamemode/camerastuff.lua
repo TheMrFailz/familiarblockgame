@@ -1,6 +1,5 @@
 -- nanynay
 
---[[
 
 
 --==============================================================
@@ -119,15 +118,13 @@ end
 hook.Add("Think", "pivotView", pivotView)
 
  
---[[
+
 if thirdpersonCamera_Allowed == true then
     enableMouseControls()
     print("Thirdperson enabled")
 else
     disableMouseControls()
 end 
-]]
+
 
 usermessage.Hook("openMoveControls", enableMouseControls)
-
-]]

@@ -31,7 +31,7 @@ include( "textureincludes.lua")
     ]]
 
 -- Can players go into build mode?
-isAllowed_Build = false
+isAllowed_Build = true
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
@@ -905,7 +905,7 @@ concommand.Add("fbg_worldsave", function(ply, cmd, args)
     
     local dupeTable_c = util.Compress(dupeTable_d)
     
-    magicDupeMachine2(dupeTable_c, args[1])
+    magicDupeMachine2(dupeTable_d, args[1])
     end)
 
 --[[ Map loading code.
@@ -946,7 +946,7 @@ function fbg_worldload(ply, fileName)
     local mapData_d = util.Decompress(mapData_c)
     
     -- Convert to a table.
-    local mapData_d = util.JSONToTable(mapData_d)
+    local mapData_d = util.JSONToTable(mapData_c)
     
     -- Setup our angles and position. In this case we're just doing the defaults WHICH YOU SHOULD PROBABLY KEEP.
     duplicator.SetLocalPos(Vector(0,0,0))
