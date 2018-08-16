@@ -5,7 +5,7 @@ local roundTime = -1
 local roundLength = 180
 
 function GM:Initialize()
-    print("35 seconds until we start doing some round memes.")
+    print("5 seconds until we start doing some round memes.")
     
     local quickPlayerList = player.GetHumans()
     for i = 1, player.GetCount() do
@@ -13,7 +13,7 @@ function GM:Initialize()
         
     end
     
-    timer.Simple( 15, function()
+    timer.Simple( 5, function()
         roundStart()
     
     end)
@@ -91,8 +91,8 @@ function roundStart()
     if table.Count(quickPlayerList) > 0 then
         fbg_worldload(quickPlayerList[1], "pirateshipbattle")
     else
-        print("Not enough players to start the round! Trying again in 15 seconds.")
-        timer.Simple(15, function()
+        print("Not enough players to start the round! Trying again in 5 seconds.")
+        timer.Simple(5, function()
             roundStart()
         end)
         return
