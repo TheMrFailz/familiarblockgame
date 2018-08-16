@@ -31,7 +31,7 @@ include( "textureincludes.lua")
     ]]
 
 -- Can players go into build mode?
-isAllowed_Build = true
+isAllowed_Build = false
 
 util.AddNetworkString( "client_ScreenMessage" )
 util.AddNetworkString( "client_SaveWorld" )
@@ -108,6 +108,7 @@ end)
     ]]
 -- Spawn function. Give them a random team. 
 function GM:PlayerInitialSpawn(ply)
+    
     --ply:ConCommand("join_playmode")
     ply:SetTeam(math.Round(math.random(3,4)))
     ply:Kill()
@@ -162,7 +163,7 @@ function GM:PlayerSpawn(ply)
     
     if ply:Team() == 1 or ply:Team() > 2 then
         
-        
+        ply:ConCommand("fbg_thirdperson_enable true")
         
         
         umsg.Start("openMoveControls", ply)

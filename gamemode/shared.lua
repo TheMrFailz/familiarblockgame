@@ -39,6 +39,10 @@ hook.Add("PlayerButtonDown", "ButtonyThings", function(ply, button)
     end
 end)
 
+local function DisableNoclip( ply )
+    return false
+end
+hook.Add( "PlayerNoClip", "DisableNoclip", DisableNoclip )
 
 function brickMatrixGenerator(entity, length, width, height)
     if CLIENT then 
